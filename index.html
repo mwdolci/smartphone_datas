@@ -44,20 +44,19 @@
     }
 
     function startAccelerometer() {
-      if (!window.DeviceMotionEvent) {
-        alert("Accéléromètre non supporté.");
-        return;
-      }
-      window.addEventListener('devicemotion', event => {
-        const data = {
-          acceleration: event.acceleration,
-          accelerationIncludingGravity: event.accelerationIncludingGravity,
-          rotationRate: event.rotationRate,
-          interval: event.interval
-        };
-        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
-      });
-    }
+	  if (!window.DeviceMotionEvent) {
+		alert("Accéléromètre non supporté.");
+		return;
+	  }
+
+	  window.addEventListener('devicemotion', event => {
+		const data = {
+		  accelerationIncludingGravity: event.accelerationIncludingGravity,
+		  interval: event.interval
+		};
+		document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+	  });
+	}
 
     function startGyroscope() {
       if (!window.DeviceOrientationEvent) {
