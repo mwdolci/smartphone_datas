@@ -3,17 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS test</title>
+  <title>Capteurs test</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
     pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
-    button { padding: 10px 20px; font-size: 16px; margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; margin-bottom: 10px; display: block; }
   </style>
 </head>
 <body>
-  <h1>Test Géolocalisation</h1>
+  <h1>Test Capteurs</h1>
   <button onclick="startGPS()">Démarrer GPS</button>
-  <pre id="gpsOutput">En attente...</pre>
+  <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
+  <button onclick="startGyroscope()">Démarrer Gyroscope</button>
+  <button onclick="startOrientation()">Démarrer Orientation</button>
+
+  <pre id="sensorOutput">En attente...</pre>
 
   <script>
     function startGPS() {
@@ -30,13 +34,60 @@
             accuracy: position.coords.accuracy,
             timestamp: position.timestamp
           };
-          document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);
+          document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
         },
         err => {
-          document.getElementById('gpsOutput').textContent = 'Erreur GPS: ' + err.message;
+          document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message;
         },
         { enableHighAccuracy: true }
       );
+    }
+
+    function startAccelerometer() {
+      if (!window.DeviceMotionEvent) {
+        alert("Accéléromètre non supporté.");
+        return;
+      }
+      window.addEventListener('devicemotion', event => {
+        const data = {
+          acceleration: event.acceleration,
+          accelerationIncludingGravity: event.accelerationIncludingGravity,
+          rotationRate: event.rotationRate,
+          interval: event.interval
+        };
+        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+
+    function startGyroscope() {
+      if (!window.DeviceOrientationEvent) {
+        alert("Gyroscope non supporté.");
+        return;
+      }
+      window.addEventListener('deviceorientation', event => {
+        const data = {
+          alpha: event.alpha, // rotation autour axe z
+          beta: event.beta,   // rotation autour axe x
+          gamma: event.gamma  // rotation autour axe y
+        };
+        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+
+    function startOrientation() {
+      if (!window.DeviceOrientationEvent) {
+        alert("Orientation non supportée.");
+        return;
+      }
+      window.addEventListener('deviceorientation', event => {
+        const data = {
+          absolute: event.absolute,
+          alpha: event.alpha,
+          beta: event.beta,
+          gamma: event.gamma
+        };
+        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+      });
     }
   </script>
 </body>
