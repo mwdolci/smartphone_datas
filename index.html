@@ -20,28 +20,59 @@
   <pre id="sensorOutput">En attente...</pre>
 
   <script>
-    function startGPS() {
-      if (!navigator.geolocation) {
-        alert('Géolocalisation non supportée.');
-        return;
-      }
+    <!-- function startGPS() { -->
+      <!-- if (!navigator.geolocation) { -->
+        <!-- alert('Géolocalisation non supportée.'); -->
+        <!-- return; -->
+      <!-- } -->
 
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const data = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            timestamp: position.timestamp
-          };
-          document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
-        },
-        err => {
-          document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message;
-        },
-        { enableHighAccuracy: true }
-      );
-    }
+      <!-- navigator.geolocation.getCurrentPosition( -->
+        <!-- position => { -->
+          <!-- const data = { -->
+            <!-- latitude: position.coords.latitude, -->
+            <!-- longitude: position.coords.longitude, -->
+            <!-- accuracy: position.coords.accuracy, -->
+            <!-- timestamp: position.timestamp -->
+          <!-- }; -->
+          <!-- document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2); -->
+        <!-- }, -->
+        <!-- err => { -->
+          <!-- document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message; -->
+        <!-- }, -->
+        <!-- { enableHighAccuracy: true } -->
+      <!-- ); -->
+    <!-- } -->
+	
+	let watchID;
+
+	function startGPS() {
+	  if (!navigator.geolocation) {
+		alert('Géolocalisation non supportée.');
+		return;
+	  }
+
+	  // Si on avait déjà un watch, on le stoppe
+	  if (watchID) {
+		navigator.geolocation.clearWatch(watchID);
+	  }
+
+	  watchID = navigator.geolocation.watchPosition(
+		position => {
+		  const data = {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude,
+			accuracy: position.coords.accuracy,
+			timestamp: position.timestamp
+		  };
+		  document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+		},
+		err => {
+		  document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message;
+		},
+		{ enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+	  );
+	}
+
 
     function startAccelerometer() {
 	  if (!window.DeviceMotionEvent) {
