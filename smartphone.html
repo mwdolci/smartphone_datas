@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPS en temps réel</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>GPS temps réel</h1>
+  <button onclick="startGPS()">Démarrer GPS</button>
+  <pre id="gpsOutput">En attente...</pre>
+
+  <script>
+    let ws;
+
+    function startGPS() {
+      if (!navigator.geolocation) {
+        alert('Géolocalisation non supportée.');
+        return;
+      }
+
+      // Connexion WebSocket vers le serveur (changer l'IP par ton serveur)
+      ws = new WebSocket('ws://192.168.0.14:8080'); // Exemple IP serveur
+
+      ws.onopen = () => console.log('Connexion WebSocket ouverte');
+      ws.onclose = () => console.log('Connexion WebSocket fermée');
+      ws.onerror = err => console.error('Erreur WebSocket:', err);
+
+      navigator.geolocation.watchPosition(position => {
+        const data = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: position.timestamp
+        };
+
+        // Affichage local
+        document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);
+
+        // Envoi au serveur
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(data));
+        }
+      }, err => {
+        console.error('Erreur GPS:', err);
+      }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 });
+    }
+  </script>
+</body>
+</html>
