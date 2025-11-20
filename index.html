@@ -25,12 +25,14 @@
   <pre id="orientationOutput">En attente...</pre>
   <button onclick="startBattery()">Démarrer Batterie</button>
   <pre id="batteryOutput">En attente...</pre>
-  <button onclick="startLight()">Démarrer Capteur Lumière</button>
-  <pre id="lightOutput">En attente...</pre>
   <button onclick="startTime()">Démarrer Heure</button>
   <pre id="timeOutput">En attente...</pre>
+  <button onclick="startNetwork()">Démarrer Réseau</button>
+  <pre id="networkOutput">En attente...</pre>
   <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
   <pre id="accelOutput">En attente...</pre>
+  <button onclick="startLight()">Démarrer Capteur Lumière</button>
+  <pre id="lightOutput">En attente...</pre>
 
   <script>	
 	let watchID;
@@ -206,6 +208,30 @@
 	  startCamera();
 	  startLight();
 	  startTime();
+	}
+	
+	function startNetwork() {
+	  if (!navigator.connection) {
+		alert("API réseau non supportée sur ce navigateur.");
+		return;
+	  }
+
+	  function updateNetwork() {
+		const connection = navigator.connection;
+		const data = {
+		  effectiveType: connection.effectiveType, // '4g', '3g', '2g', 'slow-2g'
+		  downlink: connection.downlink + " Mbps", // bande passante approximative
+		  rtt: connection.rtt + " ms", // latence approximative
+		  saveData: connection.saveData // true si mode économie de données activé
+		};
+		document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
+	  }
+
+	  // Mise à jour à chaque changement de réseau
+	  navigator.connection.addEventListener('change', updateNetwork);
+
+	  // Premier affichage
+	  updateNetwork();
 	}
 
   </script>
