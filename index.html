@@ -13,50 +13,25 @@
 <body>
   <h1>Test Capteurs</h1>
   <button onclick="startGPS()">Démarrer GPS</button>
+  <pre id="gpsOutput">En attente...</pre>
   <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
+  <pre id="accelOutput">En attente...</pre>
   <button onclick="startGyroscope()">Démarrer Gyroscope</button>
+  <pre id="gyroOutput">En attente...</pre>
   <button onclick="startOrientation()">Démarrer Orientation</button>
+  <pre id="orientationOutput">En attente...</pre>
+  <button onclick="startMicro()">Démarrer Micro</button>
+  <pre id="microOutput">En attente...</pre>
+  <button onclick="startCamera()">Démarrer Caméra</button>
+  <video id="cameraVideo" width="320" height="240" autoplay></video>
+  <button onclick="startBattery()">Démarrer Batterie</button>
+  <pre id="batteryOutput">En attente...</pre>
 
-  <pre id="sensorOutput">En attente...</pre>
-
-  <script>
-    <!-- function startGPS() { -->
-      <!-- if (!navigator.geolocation) { -->
-        <!-- alert('Géolocalisation non supportée.'); -->
-        <!-- return; -->
-      <!-- } -->
-
-      <!-- navigator.geolocation.getCurrentPosition( -->
-        <!-- position => { -->
-          <!-- const data = { -->
-            <!-- latitude: position.coords.latitude, -->
-            <!-- longitude: position.coords.longitude, -->
-            <!-- accuracy: position.coords.accuracy, -->
-            <!-- timestamp: position.timestamp -->
-          <!-- }; -->
-          <!-- document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2); -->
-        <!-- }, -->
-        <!-- err => { -->
-          <!-- document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message; -->
-        <!-- }, -->
-        <!-- { enableHighAccuracy: true } -->
-      <!-- ); -->
-    <!-- } -->
-	
+  <script>	
 	let watchID;
 
 	function startGPS() {
-	  if (!navigator.geolocation) {
-		alert('Géolocalisation non supportée.');
-		return;
-	  }
-
-	  // Si on avait déjà un watch, on le stoppe
-	  if (watchID) {
-		navigator.geolocation.clearWatch(watchID);
-	  }
-
-	  watchID = navigator.geolocation.watchPosition(
+	  navigator.geolocation.watchPosition(
 		position => {
 		  const data = {
 			latitude: position.coords.latitude,
@@ -64,61 +39,120 @@
 			accuracy: position.coords.accuracy,
 			timestamp: position.timestamp
 		  };
-		  document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
-		},
-		err => {
-		  document.getElementById('sensorOutput').textContent = 'Erreur GPS: ' + err.message;
-		},
-		{ enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+		  document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);
+		}
 	  );
 	}
 
-
-    function startAccelerometer() {
-	  if (!window.DeviceMotionEvent) {
-		alert("Accéléromètre non supporté.");
-		return;
-	  }
-
+	function startAccelerometer() {
 	  window.addEventListener('devicemotion', event => {
 		const data = {
 		  accelerationIncludingGravity: event.accelerationIncludingGravity,
 		  interval: event.interval
 		};
-		document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
+		document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2);
 	  });
 	}
 
-    function startGyroscope() {
-      if (!window.DeviceOrientationEvent) {
-        alert("Gyroscope non supporté.");
-        return;
-      }
-      window.addEventListener('deviceorientation', event => {
-        const data = {
-          alpha: event.alpha, // rotation autour axe z
-          beta: event.beta,   // rotation autour axe x
-          gamma: event.gamma  // rotation autour axe y
-        };
-        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
-      });
-    }
+	function startGyroscope() {
+	  window.addEventListener('deviceorientation', event => {
+		const data = {
+		  alpha: event.alpha,
+		  beta: event.beta,
+		  gamma: event.gamma
+		};
+		document.getElementById('gyroOutput').textContent = JSON.stringify(data, null, 2);
+	  });
+	}
 
-    function startOrientation() {
-      if (!window.DeviceOrientationEvent) {
-        alert("Orientation non supportée.");
-        return;
-      }
-      window.addEventListener('deviceorientation', event => {
-        const data = {
-          absolute: event.absolute,
-          alpha: event.alpha,
-          beta: event.beta,
-          gamma: event.gamma
-        };
-        document.getElementById('sensorOutput').textContent = JSON.stringify(data, null, 2);
-      });
-    }
+	function startOrientation() {
+	  window.addEventListener('deviceorientation', event => {
+		const data = {
+		  absolute: event.absolute,
+		  alpha: event.alpha,
+		  beta: event.beta,
+		  gamma: event.gamma
+		};
+		document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
+	  });
+	}
+	
+	function startBattery() {
+	  if (!navigator.getBattery) {
+		alert("API batterie non supportée sur ce navigateur.");
+		return;
+	  }
+
+	  navigator.getBattery().then(battery => {
+		function updateBattery() {
+		  const data = {
+			level: battery.level * 100 + '%',
+			charging: battery.charging,
+			chargingTime: battery.chargingTime,
+			dischargingTime: battery.dischargingTime
+		  };
+		  document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2);
+		}
+
+		// Événements pour mise à jour automatique
+		battery.addEventListener('levelchange', updateBattery);
+		battery.addEventListener('chargingchange', updateBattery);
+
+		// Premier affichage
+		updateBattery();
+	  });
+	}
+	
+	function startMicro() {
+	  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+		alert("Microphone non supporté.");
+		return;
+	  }
+
+	  navigator.mediaDevices.getUserMedia({ audio: true })
+		.then(stream => {
+		  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+		  const source = audioContext.createMediaStreamSource(stream);
+		  const analyser = audioContext.createAnalyser();
+		  source.connect(analyser);
+		  analyser.fftSize = 256;
+		  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+		  function updateMicro() {
+			analyser.getByteTimeDomainData(dataArray);
+			let sum = 0;
+			for (let i = 0; i < dataArray.length; i++) {
+			  sum += Math.abs(dataArray[i] - 128);
+			}
+			const volume = sum / dataArray.length;
+			document.getElementById('microOutput').textContent = "Volume approximatif : " + volume.toFixed(2);
+			requestAnimationFrame(updateMicro);
+		  }
+
+		  updateMicro();
+		})
+		.catch(err => {
+		  document.getElementById('microOutput').textContent = "Erreur micro : " + err.message;
+		});
+	}
+	
+	function startCamera() {
+	  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+		alert("Caméra non supportée.");
+		return;
+	  }
+
+	  navigator.mediaDevices.getUserMedia({ video: true })
+		.then(stream => {
+		  const video = document.getElementById('cameraVideo');
+		  video.srcObject = stream;
+		})
+		.catch(err => {
+		  console.error("Erreur caméra :", err);
+		  alert("Impossible d'accéder à la caméra : " + err.message);
+		});
+	}
+
   </script>
 </body>
 </html>
