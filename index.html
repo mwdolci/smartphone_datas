@@ -11,21 +11,26 @@
   </style>
 </head>
 <body>
-  <h1>Test Capteurs</h1>
-  <button onclick="startGPS()">Démarrer GPS</button>
-  <pre id="gpsOutput">En attente...</pre>
-  <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
-  <pre id="accelOutput">En attente...</pre>
-  <button onclick="startGyroscope()">Démarrer Gyroscope</button>
-  <pre id="gyroOutput">En attente...</pre>
-  <button onclick="startOrientation()">Démarrer Orientation</button>
-  <pre id="orientationOutput">En attente...</pre>
+  <h1>Test capteurs du smartphone</h1>
+  <button onclick="startAll()">Démarrer Tout</button><br><br>
   <button onclick="startMicro()">Démarrer Micro</button>
   <pre id="microOutput">En attente...</pre>
   <button onclick="startCamera()">Démarrer Caméra</button>
   <video id="cameraVideo" width="320" height="240" autoplay></video>
+  <button onclick="startGPS()">Démarrer GPS</button>
+  <pre id="gpsOutput">En attente...</pre>
+  <button onclick="startGyroscope()">Démarrer Gyroscope</button>
+  <pre id="gyroOutput">En attente...</pre>
+  <button onclick="startOrientation()">Démarrer Orientation</button>
+  <pre id="orientationOutput">En attente...</pre>
   <button onclick="startBattery()">Démarrer Batterie</button>
   <pre id="batteryOutput">En attente...</pre>
+  <button onclick="startLight()">Démarrer Capteur Lumière</button>
+  <pre id="lightOutput">En attente...</pre>
+  <button onclick="startTime()">Démarrer Heure</button>
+  <pre id="timeOutput">En attente...</pre>
+  <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
+  <pre id="accelOutput">En attente...</pre>
 
   <script>	
 	let watchID;
@@ -151,6 +156,56 @@
 		  console.error("Erreur caméra :", err);
 		  alert("Impossible d'accéder à la caméra : " + err.message);
 		});
+	}
+	
+	function startLight() {
+	  if (!('AmbientLightSensor' in window)) {
+		alert("Capteur de lumière ambiante non supporté sur ce navigateur.");
+		return;
+	  }
+
+	  try {
+		const sensor = new AmbientLightSensor({ frequency: 1 }); // fréquence 1Hz
+		sensor.addEventListener('reading', () => {
+		  const data = {
+			illuminance: sensor.illuminance // en lux
+		  };
+		  document.getElementById('lightOutput').textContent = JSON.stringify(data, null, 2);
+		});
+		sensor.addEventListener('error', event => {
+		  document.getElementById('lightOutput').textContent = 'Erreur capteur lumière: ' + event.error.name;
+		});
+		sensor.start();
+	  } catch (err) {
+		document.getElementById('lightOutput').textContent = 'Erreur capteur lumière: ' + err.message;
+	  }
+	}
+	
+	function startTime() {
+	  function updateTime() {
+		const now = new Date();
+		const data = {
+		  localeTime: now.toLocaleTimeString(),
+		  fullDate: now.toLocaleString()
+		};
+		document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2);
+	  }
+
+	  // Mettre à jour toutes les secondes
+	  updateTime();
+	  setInterval(updateTime, 1000);
+	}
+	
+	function startAll() {
+	  startGPS();
+	  startAccelerometer();
+	  startGyroscope();
+	  startOrientation();
+	  startBattery();
+	  startMicro();
+	  startCamera();
+	  startLight();
+	  startTime();
 	}
 
   </script>
