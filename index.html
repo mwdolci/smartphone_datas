@@ -34,7 +34,15 @@
   <button onclick="startLight()">Démarrer Capteur Lumière</button>
   <pre id="lightOutput">En attente...</pre>
 
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>	
+	const socket = io("http://192.168.1.10:5000");  // ← IP de ton PC
+	socket.on("message", msg => console.log("Serveur :", msg));
+
+	// Exemple : envoyer les données GPS au PC
+	function sendGPS(data) {
+		socket.send(JSON.stringify({ type: "gps", data: data }));
+	}
 	let watchID;
 
 	function startGPS() {
@@ -46,7 +54,9 @@
 			accuracy: position.coords.accuracy,
 			timestamp: position.timestamp
 		  };
-		  document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);
+		  document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2)
+		  // ENVOI VERS PC
+    	  socket.send(JSON.stringify({ type: "gps", data: data }));
 		}
 	  );
 	}
@@ -233,6 +243,21 @@
 	  // Premier affichage
 	  updateNetwork();
 	}
+
+	var socket = null;
+
+	if(adress != ''){
+	socket = io(adress);
+	}
+
+	document.addEventListener("DOMContentLoaded", (event) => {
+	
+	if(socket != null){
+		socket.on('connect', function() {
+		socket.send('User has connected!');
+		});
+	}
+	});
 
   </script>
 </body>

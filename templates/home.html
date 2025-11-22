@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard Capteurs</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Données reçues du téléphone</h1>
+    <pre id="output"></pre>
+
+    <script>
+        const socket = io();
+
+        // Quand le téléphone envoie des données
+        socket.on("message", msg => {
+            document.getElementById("output").textContent += msg + "\n";
+        });
+
+        // Envoyer un message au téléphone
+        socket.send("PC connecté !");
+    </script>
+</body>
+</html>
