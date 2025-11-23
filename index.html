@@ -1,25 +1,76 @@
-﻿<script>
-const ws = new WebSocket("ws://192.168.1.108:8080");
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Capteurs</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
+  button { padding: 10px 20px; margin-bottom: 10px; display: block; }
+  video { display: block; margin-bottom: 10px; }
+</style>
+</head>
+<body>
 
+<h1>Test capteurs du smartphone</h1>
+
+<button onclick="startAll()">Démarrer Tout</button>
+
+<button onclick="startGPS()">Démarrer GPS</button>
+<pre id="gpsOutput">En attente...</pre>
+
+<button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
+<pre id="accelOutput">En attente...</pre>
+
+<button onclick="startGyroscope()">Démarrer Gyroscope</button>
+<pre id="gyroOutput">En attente...</pre>
+
+<button onclick="startOrientation()">Démarrer Orientation</button>
+<pre id="orientationOutput">En attente...</pre>
+
+<button onclick="startBattery()">Démarrer Batterie</button>
+<pre id="batteryOutput">En attente...</pre>
+
+<button onclick="startMicro()">Démarrer Micro</button>
+<pre id="microOutput">En attente...</pre>
+
+<button onclick="startCamera()">Démarrer Caméra</button>
+<video id="cameraVideo" width="320" height="240" autoplay></video>
+
+<button onclick="startLight()">Démarrer Capteur Lumière</button>
+<pre id="lightOutput">En attente...</pre>
+
+<button onclick="startTime()">Démarrer Heure</button>
+<pre id="timeOutput">En attente...</pre>
+
+<button onclick="startNetwork()">Démarrer Réseau</button>
+<pre id="networkOutput">En attente...</pre>
+
+<script>
+const ws = new WebSocket("ws://192.168.1.108:8080"); // <-- IP de ton PC sur le même Wi-Fi
+
+// Test de connexion WebSocket
 ws.onopen = () => {
-    console.log("WebSocket ouverte, prêt à envoyer les données");
-
-    // Test rapide : envoyer un message toutes les secondes
+    console.log("WebSocket ouverte !");
     setInterval(() => {
         sendSensor("test", { msg: "Hello cockpit !" });
     }, 1000);
+};
+
+ws.onerror = (err) => {
+    console.error("Erreur WebSocket :", err);
 };
 
 function sendSensor(name, data) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ capteur: name, data }));
     } else {
-        // si la WebSocket n'est pas prête, réessayer dans 500ms
         setTimeout(() => sendSensor(name, data), 500);
     }
 }
 
-// ---------------- GPS ----------------
+// -------- Capteurs --------
 function startGPS() {
     navigator.geolocation.watchPosition(
         position => {
@@ -36,7 +87,6 @@ function startGPS() {
     );
 }
 
-// ---------------- Accéléromètre ----------------
 function startAccelerometer() {
     window.addEventListener('devicemotion', event => {
         const data = {
@@ -48,7 +98,6 @@ function startAccelerometer() {
     });
 }
 
-// ---------------- Gyroscope ----------------
 function startGyroscope() {
     window.addEventListener('deviceorientation', event => {
         const data = {
@@ -61,7 +110,6 @@ function startGyroscope() {
     });
 }
 
-// ---------------- Orientation ----------------
 function startOrientation() {
     window.addEventListener('deviceorientation', event => {
         const data = {
@@ -75,13 +123,8 @@ function startOrientation() {
     });
 }
 
-// ---------------- Batterie ----------------
 function startBattery() {
-    if (!navigator.getBattery) {
-        alert("API batterie non supportée sur ce navigateur.");
-        return;
-    }
-
+    if (!navigator.getBattery) { alert("API batterie non supportée"); return; }
     navigator.getBattery().then(battery => {
         function updateBattery() {
             const data = {
@@ -93,74 +136,51 @@ function startBattery() {
             document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2);
             sendSensor("battery", data);
         }
-
         battery.addEventListener('levelchange', updateBattery);
         battery.addEventListener('chargingchange', updateBattery);
-
-        updateBattery(); // affichage initial
+        updateBattery();
     });
 }
 
-// ---------------- Micro ----------------
 function startMicro() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Microphone non supporté.");
-        return;
-    }
-
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Microphone non supporté"); return; }
     navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioContext.createMediaStreamSource(stream);
-            const analyser = audioContext.createAnalyser();
-            source.connect(analyser);
-            analyser.fftSize = 256;
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    .then(stream => {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        source.connect(analyser);
+        analyser.fftSize = 256;
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-            function updateMicro() {
-                analyser.getByteTimeDomainData(dataArray);
-                let sum = 0;
-                for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128);
-                const volume = sum / dataArray.length;
-                const data = { volume };
-                document.getElementById('microOutput').textContent = "Volume approximatif : " + volume.toFixed(2);
-                sendSensor("micro", data);
-                requestAnimationFrame(updateMicro);
-            }
-
-            updateMicro();
-        })
-        .catch(err => {
-            document.getElementById('microOutput').textContent = "Erreur micro : " + err.message;
-        });
+        function updateMicro() {
+            analyser.getByteTimeDomainData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i]-128);
+            const volume = sum / dataArray.length;
+            const data = { volume };
+            document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2);
+            sendSensor("micro", data);
+            requestAnimationFrame(updateMicro);
+        }
+        updateMicro();
+    })
+    .catch(err => document.getElementById('microOutput').textContent = "Erreur micro : " + err.message);
 }
 
-// ---------------- Caméra ----------------
 function startCamera() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Caméra non supportée.");
-        return;
-    }
-
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Caméra non supportée"); return; }
     navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            const video = document.getElementById('cameraVideo');
-            video.srcObject = stream;
-            sendSensor("camera", { status: "streaming" });
-        })
-        .catch(err => {
-            console.error("Erreur caméra :", err);
-            alert("Impossible d'accéder à la caméra : " + err.message);
-        });
+    .then(stream => {
+        const video = document.getElementById('cameraVideo');
+        video.srcObject = stream;
+        sendSensor("camera", { status: "streaming" });
+    })
+    .catch(err => console.error("Erreur caméra :", err));
 }
 
-// ---------------- Capteur lumière ----------------
 function startLight() {
-    if (!('AmbientLightSensor' in window)) {
-        alert("Capteur de lumière ambiante non supporté.");
-        return;
-    }
-
+    if (!('AmbientLightSensor' in window)) { alert("Capteur lumière non supporté"); return; }
     try {
         const sensor = new AmbientLightSensor({ frequency: 1 });
         sensor.addEventListener('reading', () => {
@@ -168,55 +188,42 @@ function startLight() {
             document.getElementById('lightOutput').textContent = JSON.stringify(data, null, 2);
             sendSensor("light", data);
         });
-        sensor.addEventListener('error', event => {
-            document.getElementById('lightOutput').textContent = 'Erreur capteur lumière: ' + event.error.name;
-        });
+        sensor.addEventListener('error', event => document.getElementById('lightOutput').textContent = 'Erreur lumière: ' + event.error.name);
         sensor.start();
-    } catch (err) {
-        document.getElementById('lightOutput').textContent = 'Erreur capteur lumière: ' + err.message;
+    } catch(e) {
+        document.getElementById('lightOutput').textContent = 'Erreur lumière: ' + e.message;
     }
 }
 
-// ---------------- Heure ----------------
 function startTime() {
     function updateTime() {
         const now = new Date();
-        const data = {
-            localeTime: now.toLocaleTimeString(),
-            fullDate: now.toLocaleString()
-        };
+        const data = { localeTime: now.toLocaleTimeString(), fullDate: now.toLocaleString() };
         document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2);
         sendSensor("time", data);
     }
-
     updateTime();
     setInterval(updateTime, 1000);
 }
 
-// ---------------- Réseau ----------------
 function startNetwork() {
-    if (!navigator.connection) {
-        alert("API réseau non supportée sur ce navigateur.");
-        return;
-    }
-
+    if (!navigator.connection) { alert("API réseau non supportée"); return; }
     function updateNetwork() {
-        const connection = navigator.connection;
+        const conn = navigator.connection;
         const data = {
-            effectiveType: connection.effectiveType,
-            downlink: connection.downlink + " Mbps",
-            rtt: connection.rtt + " ms",
-            saveData: connection.saveData
+            effectiveType: conn.effectiveType,
+            downlink: conn.downlink + " Mbps",
+            rtt: conn.rtt + " ms",
+            saveData: conn.saveData
         };
         document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
         sendSensor("network", data);
     }
-
     navigator.connection.addEventListener('change', updateNetwork);
     updateNetwork();
 }
 
-// ---------------- Démarrer tout ----------------
+// Démarrer tous les capteurs
 function startAll() {
     startGPS();
     startAccelerometer();
@@ -230,3 +237,5 @@ function startAll() {
     startNetwork();
 }
 </script>
+</body>
+</html>
