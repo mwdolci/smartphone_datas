@@ -1,23 +1,27 @@
-﻿import { WebSocketServer } from "ws";
-import http from "http";
+﻿const WebSocket = require("ws");
 
-const port = process.env.PORT || 8080;
+// Render fournit le port via la variable d'environnement PORT
+const PORT = process.env.PORT || 10000;
 
-// Render ne supporte pas les WebSocket "brutes" : il faut créer un serveur HTTP
-const server = http.createServer();
+const wss = new WebSocket.Server({ port: PORT });
 
-const wss = new WebSocketServer({ server });
+console.log(`WebSocket server running on port ${PORT}`);
 
-wss.on("connection", (ws) => {
+wss.on("connection", ws => {
     console.log("Client connecté");
 
-    ws.on("message", (message) => {
-        console.log("Données reçues :", message.toString());
+    ws.on("message", message => {
+        console.log("Message reçu :", message);
+
+        // Diffuse à tous les clients sauf l'émetteur
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN && client !== ws) {
+                client.send(message);
+            }
+        });
     });
 
-    ws.on("close", () => console.log("Client déconnecté"));
-});
-
-server.listen(port, () => {
-    console.log("WebSocket server running on port " + port);
+    ws.on("close", () => {
+        console.log("Client déconnecté");
+    });
 });

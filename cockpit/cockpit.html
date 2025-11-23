@@ -20,13 +20,19 @@
   ws.onopen = () => console.log("Connecté au serveur WebSocket");
 
   ws.onmessage = event => {
-      const msg = JSON.parse(event.data);
-      console.log("Données reçues :", msg);
+      try {
+          const msg = JSON.parse(event.data);
+          console.log("Données reçues :", msg);
 
-      // Affichage simple
-      const output = document.getElementById("output");
-      output.textContent += JSON.stringify(msg, null, 2) + "\n\n";
+          const output = document.getElementById("output");
+          output.textContent += JSON.stringify(msg, null, 2) + "\n\n";
+      } catch (err) {
+          console.error("Erreur parsing JSON :", err);
+      }
   };
+
+  ws.onerror = err => console.error("WebSocket erreur :", err);
+  ws.onclose = () => console.log("WebSocket fermée");
 </script>
 </body>
 </html>
