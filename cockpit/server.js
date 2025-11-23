@@ -1,7 +1,7 @@
-﻿import WebSocket, { WebSocketServer } from "ws";
+﻿import WebSocket from "ws";
 
 const PORT = process.env.PORT || 10000;
-const wss = new WebSocketServer({ port: PORT });
+const wss = new WebSocket.Server({ port: PORT });
 
 console.log(`WebSocket server running on port ${PORT}`);
 
@@ -12,12 +12,14 @@ wss.on("connection", ws => {
     ws.send(JSON.stringify({ msg: "Bienvenue !" }));
 
     ws.on("message", message => {
-        console.log("Message reçu :", message);
+        // Convertir le Buffer en string si nécessaire
+        const msgStr = message.toString(); 
+        console.log("Message reçu :", msgStr);
 
-        // Broadcast aux autres clients
+        // Renvoyer à tous les autres clients
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN && client !== ws) {
-                client.send(message);
+                client.send(msgStr); // on renvoie bien une string JSON
             }
         });
     });
