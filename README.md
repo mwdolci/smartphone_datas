@@ -21,6 +21,7 @@ cert.pem → certificat auto‑signé
 👉 Pour les tests en local, un certificat auto‑signé suffit. Sur un vrai déploiement, il faudra un certificat valide (ex. Let’s Encrypt).
 
 ## 2. Modifier le serveur Flask
+
 Dans ton main.py, ajouter le paramètre SSL :
 
 ```python
