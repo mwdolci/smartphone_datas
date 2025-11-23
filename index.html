@@ -17,6 +17,8 @@
 
 <button onclick="startAll()">Démarrer Tout</button>
 
+<pre id="logOutput">Logs WebSocket et capteurs :</pre>
+
 <button onclick="startGPS()">Démarrer GPS</button>
 <pre id="gpsOutput">En attente...</pre>
 
@@ -50,25 +52,32 @@
 <script>
 const ws = new WebSocket("ws://192.168.1.108:8080"); // <-- IP de ton PC sur le même Wi-Fi
 
-// Test de connexion WebSocket
-ws.onopen = () => {
-    console.log("WebSocket ouverte !");
-    setInterval(() => {
-        sendSensor("test", { msg: "Hello cockpit !" });
-    }, 1000);
-};
+// Fonction pour afficher les logs dans la page
+function log(msg) {
+    const pre = document.getElementById('logOutput');
+    pre.textContent += msg + "\n";
+}
 
-ws.onerror = (err) => {
-    console.error("Erreur WebSocket :", err);
-};
-
+// Fonction pour envoyer les données via WebSocket
 function sendSensor(name, data) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ capteur: name, data }));
+        log("Envoyé : " + name);
     } else {
+        log("WebSocket pas encore ouverte, réessai pour " + name);
         setTimeout(() => sendSensor(name, data), 500);
     }
 }
+
+// WebSocket événements
+ws.onopen = () => {
+    log("WebSocket ouverte !");
+    // test simple : message toutes les secondes
+    setInterval(() => sendSensor("test", { msg: "Hello cockpit !" }), 1000);
+};
+ws.onmessage = e => log("Reçu du serveur : " + e.data);
+ws.onerror = e => log("Erreur WebSocket : " + e);
+ws.onclose = e => log("WebSocket fermée.");
 
 // -------- Capteurs --------
 function startGPS() {
@@ -236,6 +245,7 @@ function startAll() {
     startTime();
     startNetwork();
 }
+
 </script>
 </body>
 </html>
