@@ -5,20 +5,23 @@
   <title>Dashboard Capteurs</title>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
+
 <body>
     <h1>Données reçues du téléphone</h1>
     <pre id="output"></pre>
 
     <script>
-        const socket = io();
+        // Adresse du serveur Flask
+        const socket = io("http://192.168.50.238:5000");
 
-        // Quand le téléphone envoie des données
-        socket.on("message", msg => {
-            document.getElementById("output").textContent += msg + "\n";
+        // Message reçu du serveur
+        socket.on("sensor", msg => {
+            document.getElementById("output").textContent +=
+                JSON.stringify(msg, null, 2) + "\n\n";
         });
 
-        // Envoyer un message au téléphone
-        socket.send("PC connecté !");
+        // Prévenir le serveur que le PC est connecté
+        socket.emit("sensor", { type: "system", message: "PC connecté" });
     </script>
 </body>
 </html>

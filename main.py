@@ -1,22 +1,23 @@
 from flask import Flask, render_template
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, emit
+import datetime
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*")  # autorise connexion depuis LAN
 
-@app.route('/')
+@app.route("/")
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template("home.html")
 
-@app.route('/capteurs')
-def capteurs():
-    return render_template("capteurs.html")
+@app.route("/phone")
+def phone():
+    return render_template("phone.html")
 
-# Message envoyé par téléphone ou PC
-@socketio.on("message")
-def handle_message(msg):
-    print("Message reçu :", msg)
-    send(msg, broadcast=True)   # Renvoi à tout le monde
+@socketio.on("sensor")
+def handle_sensor(data):
+    timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] Reçu :", data)
+    emit("sensor", data, broadcast=True)  # renvoie aux clients connectés
 
-if __name__ == '__main__':
-    socketio.run(app, host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
