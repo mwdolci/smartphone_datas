@@ -2,37 +2,120 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Cockpit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cockpit temps réel</title>
 <style>
   body { font-family: sans-serif; padding: 20px; }
-  pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
+  h1 { margin-bottom: 10px; }
+  pre { background: #f0f0f0; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto; }
+  .sensor { margin-bottom: 20px; }
 </style>
 </head>
 <body>
+
 <h1>Cockpit temps réel</h1>
 
-<pre id="output">En attente des données...</pre>
+<div class="sensor">
+  <h2>Logs WebSocket</h2>
+  <pre id="logOutput">En attente de connexion...</pre>
+</div>
+
+<div class="sensor">
+  <h2>GPS</h2>
+  <pre id="gpsOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Accéléromètre</h2>
+  <pre id="accelOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Gyroscope</h2>
+  <pre id="gyroOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Orientation</h2>
+  <pre id="orientationOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Batterie</h2>
+  <pre id="batteryOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Microphone</h2>
+  <pre id="microOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Caméra</h2>
+  <video id="cameraVideo" width="320" height="240" autoplay></video>
+</div>
+
+<div class="sensor">
+  <h2>Lumière</h2>
+  <pre id="lightOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Heure</h2>
+  <pre id="timeOutput">En attente...</pre>
+</div>
+
+<div class="sensor">
+  <h2>Réseau</h2>
+  <pre id="networkOutput">En attente...</pre>
+</div>
 
 <script>
-  // 🔥 Connexion au serveur WebSocket
-  const ws = new WebSocket("wss://smartphone-datas.onrender.com");
+const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
-  ws.onopen = () => console.log("Connecté au serveur WebSocket");
+// Affiche les logs dans la page
+function log(msg) {
+  const pre = document.getElementById('logOutput');
+  pre.textContent += msg + "\n";
+  pre.scrollTop = pre.scrollHeight;
+}
 
-  ws.onmessage = event => {
-      try {
-          const msg = JSON.parse(event.data);
-          console.log("Données reçues :", msg);
+// Gestion WebSocket
+ws.onopen = () => log("WebSocket ouverte !");
+ws.onmessage = event => {
+  const msg = JSON.parse(event.data);
+  log("Reçu : " + JSON.stringify(msg));
+  const data = msg.data;
 
-          const output = document.getElementById("output");
-          output.textContent += JSON.stringify(msg, null, 2) + "\n\n";
-      } catch (err) {
-          console.error("Erreur parsing JSON :", err);
-      }
-  };
+  switch(msg.capteur) {
+    case "gps": document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "gyroscope": document.getElementById('gyroOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "orientation": document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;
+    case "light": document.getElementById('lightOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "time": document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); break;
+    case "network": document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); break;
+    default: break;
+  }
+};
 
-  ws.onerror = err => console.error("WebSocket erreur :", err);
-  ws.onclose = () => console.log("WebSocket fermée");
+ws.onerror = e => log("Erreur WebSocket : " + e);
+ws.onclose = e => log("WebSocket fermée.");
+
+// Fonction pour envoyer les données depuis le smartphone
+function sendSensor(name, data) {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ capteur: name, data }));
+    log("Envoyé : " + name);
+  } else {
+    log("WebSocket pas ouverte pour " + name + ", réessai...");
+    setTimeout(() => sendSensor(name, data), 500);
+  }
+}
 </script>
+
 </body>
 </html>
