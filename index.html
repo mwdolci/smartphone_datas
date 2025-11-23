@@ -1,9 +1,21 @@
 ﻿<script>
 const ws = new WebSocket("ws://192.168.1.108:8080");
 
+ws.onopen = () => {
+    console.log("WebSocket ouverte, prêt à envoyer les données");
+
+    // Test rapide : envoyer un message toutes les secondes
+    setInterval(() => {
+        sendSensor("test", { msg: "Hello cockpit !" });
+    }, 1000);
+};
+
 function sendSensor(name, data) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ capteur: name, data }));
+    } else {
+        // si la WebSocket n'est pas prête, réessayer dans 500ms
+        setTimeout(() => sendSensor(name, data), 500);
     }
 }
 
