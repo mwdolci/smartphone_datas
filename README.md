@@ -61,11 +61,3 @@ Tester la connexion avec :
 ```bash
 curl -k https://<IP_du_PC>:5000
 ```
-
-## 5. Étapes suivantes possibles
-
-Automatiser la génération du certificat avec un script.
-
-Tester avec ngrok ou un proxy HTTPS pour éviter les certificats auto‑signés.
-
-Déployer sur un serveur avec Let’s Encrypt pour un certificat reconnu.
