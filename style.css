@@ -1,0 +1,27 @@
+﻿body { 
+  font-family: sans-serif; 
+  padding: 20px; 
+}
+
+pre { 
+  background: #f0f0f0; 
+  padding: 10px; 
+  border-radius: 5px; 
+}
+
+button { 
+  padding: 10px 20px; 
+  margin-bottom: 10px; 
+  display: block; 
+}
+
+video { 
+  display: block; 
+  margin-bottom: 10px; 
+}
+
+#logOutput {
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}

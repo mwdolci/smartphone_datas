@@ -1,0 +1,20 @@
+﻿body { 
+  font-family: sans-serif; 
+  padding: 20px; 
+}
+
+h1 { 
+  margin-bottom: 10px; 
+}
+
+pre { 
+  background: #f0f0f0; 
+  padding: 10px; 
+  border-radius: 5px; 
+  max-height: 200px; 
+  overflow-y: auto; 
+}
+
+.sensor { 
+  margin-bottom: 20px; 
+}
