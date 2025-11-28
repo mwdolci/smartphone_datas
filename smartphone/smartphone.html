@@ -4,47 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capteurs</title>
+    <meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
+    <title>SmartCoskpitSensor</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
+<header class="entete">
+	<div class="bannier"> <h1>Smart Cockpit Sensor</h1></div>
+</header>
+
 <body>
+    <main>
+        <button onclick="startAll()">Démarrer tout</button>
 
-    <h1>Capteurs du smartphone</h1>
+        <pre id="logOutput">Logs WebSocket et capteurs :</pre>
 
-    <button onclick="startAll()">Démarrer Tout</button>
+        <button onclick="startGPS()">GPS</button>
+        <pre id="gpsOutput">En attente...</pre>
 
-    <pre id="logOutput">Logs WebSocket et capteurs :</pre>
+        <button onclick="startAccelerometer()">Accéléromètre</button>
+        <pre id="accelOutput">En attente...</pre>
 
-    <button onclick="startGPS()">Démarrer GPS</button>
-    <pre id="gpsOutput">En attente...</pre>
+        <button onclick="startGyroscope()">Gyroscope</button>
+        <pre id="gyroOutput">En attente...</pre>
 
-    <button onclick="startAccelerometer()">Démarrer Accéléromètre</button>
-    <pre id="accelOutput">En attente...</pre>
+        <button onclick="startOrientation()">Orientation</button>
+        <pre id="orientationOutput">En attente...</pre>
 
-    <button onclick="startGyroscope()">Démarrer Gyroscope</button>
-    <pre id="gyroOutput">En attente...</pre>
+        <button onclick="startBattery()">Batterie</button>
+        <pre id="batteryOutput">En attente...</pre>
 
-    <button onclick="startOrientation()">Démarrer Orientation</button>
-    <pre id="orientationOutput">En attente...</pre>
+        <button onclick="startMicro()">Micro</button>
+        <pre id="microOutput">En attente...</pre>
 
-    <button onclick="startBattery()">Démarrer Batterie</button>
-    <pre id="batteryOutput">En attente...</pre>
+        <button onclick="startCamera()">Caméra</button>
+        <video id="cameraVideo" width="180" height="auto" autoplay></video>
 
-    <button onclick="startMicro()">Démarrer Micro</button>
-    <pre id="microOutput">En attente...</pre>
+        <button onclick="startLight()">Lumière ambiante</button>
+        <pre id="lightOutput">En attente...</pre>
 
-    <button onclick="startCamera()">Démarrer Caméra</button>
-    <video id="cameraVideo" width="320" height="240" autoplay></video>
+        <button onclick="startTime()">Heure</button>
+        <pre id="timeOutput">En attente...</pre>
 
-    <button onclick="startLight()">Démarrer Capteur Lumière</button>
-    <pre id="lightOutput">En attente...</pre>
-
-    <button onclick="startTime()">Démarrer Heure</button>
-    <pre id="timeOutput">En attente...</pre>
-
-    <button onclick="startNetwork()">Démarrer Réseau</button>
-    <pre id="networkOutput">En attente...</pre>
+        <button onclick="startNetwork()">Réseau</button>
+        <pre id="networkOutput">En attente...</pre>
+    </main>
 
     <script>
         const ws = new WebSocket("wss://smartphone-datas.onrender.com");
