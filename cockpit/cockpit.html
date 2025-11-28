@@ -47,7 +47,7 @@
 
 <div class="sensor">
   <h2>Caméra</h2>
-  <video id="cameraVideo" width="320" height="240" autoplay></video>
+  <video id="cockpitVideo" width="640" height="480" autoplay playsinline></video>
 </div>
 
 <div class="sensor">
@@ -110,6 +110,36 @@ function sendSensor(name, data) {
     setTimeout(() => sendSensor(name, data), 500);
   }
 }
+
+const pcCockpit = new RTCPeerConnection();
+const cockpitVideo = document.getElementById('cockpitVideo');
+
+pcCockpit.ontrack = event => {
+    cockpitVideo.srcObject = event.streams[0];
+};
+
+// WebSocket pour signalisation
+const wsCockpit = new WebSocket("wss://smartphone-datas.onrender.com");
+
+wsCockpit.onmessage = async (event) => {
+    const message = JSON.parse(event.data);
+
+    if (message.offer) {
+        await pcCockpit.setRemoteDescription(message.offer);
+        const answer = await pcCockpit.createAnswer();
+        await pcCockpit.setLocalDescription(answer);
+        wsCockpit.send(JSON.stringify({ answer }));
+    }
+
+    if (message.candidate) {
+        await pcCockpit.addIceCandidate(message.candidate);
+    }
+};
+
+// ICE candidates côté cockpit
+pcCockpit.onicecandidate = e => {
+    if (e.candidate) wsCockpit.send(JSON.stringify({ candidate: e.candidate }));
+};
 </script>
 
 </body>
