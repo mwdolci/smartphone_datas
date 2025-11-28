@@ -35,8 +35,7 @@
     <pre id="microOutput">En attente...</pre>
 
     <button onclick="startCamera()">Démarrer Caméra</button>
-    <!-- <video id="cameraVideo" width="320" height="240" autoplay></video> -->
-    <video id="cameraVideo" width="320" height="240" autoplay playsinline></video>
+    <video id="cameraVideo" width="320" height="240" autoplay></video>
 
     <button onclick="startLight()">Démarrer Capteur Lumière</button>
     <pre id="lightOutput">En attente...</pre>
@@ -48,9 +47,6 @@
     <pre id="networkOutput">En attente...</pre>
 
     <script>
-        let pc;           // RTCPeerConnection pour WebRTC
-        let localStream;  // Flux caméra du smartphone
-
         const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
         // Fonction pour afficher les logs dans la page
@@ -76,19 +72,8 @@
             // test simple : message toutes les secondes
             setInterval(() => sendSensor("test", { msg: "Hello cockpit !" }), 1000);
         };
-        //ws.onmessage = e => log("Reçu du serveur : " + e.data);
-        ws.onmessage = async (event) => {
-            const message = JSON.parse(event.data);
 
-            // Gérer réponse WebRTC du cockpit
-            if (message.answer) {
-                await pc.setRemoteDescription(message.answer);
-            }
-
-            if (message.candidate) {
-                await pc.addIceCandidate(message.candidate);
-            }
-        };
+        ws.onmessage = e => log("Reçu du serveur : " + e.data);
         ws.onerror = e => log("Erreur WebSocket : " + e);
         ws.onclose = e => log("WebSocket fermée.");
 
@@ -190,51 +175,15 @@
                 .catch(err => document.getElementById('microOutput').textContent = "Erreur micro : " + err.message);
         }
 
-        // function startCamera() {
-        //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Caméra non supportée"); return; }
-        //     navigator.mediaDevices.getUserMedia({ video: true })
-        //     .then(stream => {
-        //         const video = document.getElementById('cameraVideo');
-        //         video.srcObject = stream;
-        //         sendSensor("camera", { status: "streaming" });
-        //     })
-        //     .catch(err => console.error("Erreur caméra :", err));
-        // }
-
         function startCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert("Caméra non supportée");
-                return;
-            }
-
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-                .then(stream => {
-                    localStream = stream;
-
-                    // Affiche localement
-                    const video = document.getElementById('cameraVideo');
-                    video.srcObject = stream;
-
-                    sendSensor("camera", { status: "streaming" });
-
-                    // --- WebRTC ---
-                    pc = new RTCPeerConnection();
-
-                    // Ajouter les pistes locales au PeerConnection
-                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
-
-                    // ICE candidates → envoyées via WebSocket
-                    pc.onicecandidate = event => {
-                        if (event.candidate) ws.send(JSON.stringify({ candidate: event.candidate }));
-                    };
-
-                    // Créer et envoyer l'offre
-                    pc.createOffer().then(offer => {
-                        pc.setLocalDescription(offer);
-                        ws.send(JSON.stringify({ offer }));
-                    });
-                })
-                .catch(err => console.error("Erreur caméra :", err));
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Caméra non supportée"); return; }
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = stream;
+                sendSensor("camera", { status: "streaming" });
+            })
+            .catch(err => console.error("Erreur caméra :", err));
         }
 
         function startLight() {
@@ -294,7 +243,6 @@
             startTime();
             startNetwork();
         }
-
 
     </script>
 </body>
