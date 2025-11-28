@@ -178,12 +178,12 @@
         function startCamera() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Caméra non supportée"); return; }
             navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = stream;
-                sendSensor("camera", { status: "streaming" });
-            })
-            .catch(err => console.error("Erreur caméra :", err));
+                .then(stream => {
+                    const video = document.getElementById('cameraVideo');
+                    video.srcObject = stream;
+                    sendSensor("camera", { status: "streaming" });
+                })
+                .catch(err => console.error("Erreur caméra :", err));
         }
 
         function startLight() {
