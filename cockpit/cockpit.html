@@ -4,68 +4,93 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cockpit temps réel</title>
-	<link rel="stylesheet" href="style.css">
+	<meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
+	<title>SmartCockpit</title>
+	<link rel="stylesheet" href="Style.css">
 </head>
 
+<header class="entete">
+	<div class="bannier"> <h1>SmartCockpit</h1></div>
+</header>
+
 <body>
+	<main>
+		<div class = "grid-container-widgets">
+			<div class="widget">Localisation</div>
+			<div class="widget">Orientation</div>
+            <div class="widget">Boussole</div>
+			<div class="widget">Météo</div>
+            <div class="widget">Caméra</div>
+			<div class="widget">Micro</div>
+            <div class="widget">Batterie</div>
+            <div class="widget">Heure</div>
+            <div class="widget">Réseau</div>
+			<div class="widget">...</div>
+		</div>
 
-	<h1>Cockpit temps réel</h1>
+		<div class = "debug-container">
+			<h2 class="title-debug" onclick="toggleDebug()">
+				<span class="title-text">Debugeur</span>
+				<span class="title-arrow">▼</span>
+			</h2>
+			<div id="debugContent">
+				<div class="sensor">
+					<h2>Logs WebSocket</h2>
+					<pre id="logOutput">En attente de connexion...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Logs WebSocket</h2>
-		<pre id="logOutput">En attente de connexion...</pre>
-	</div>
+				<div class="sensor">
+					<h2>GPS</h2>
+					<pre id="gpsOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>GPS</h2>
-		<pre id="gpsOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Accéléromètre</h2>
+					<pre id="accelOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Accéléromètre</h2>
-		<pre id="accelOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Gyroscope</h2>
+					<pre id="gyroOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Gyroscope</h2>
-		<pre id="gyroOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Orientation</h2>
+					<pre id="orientationOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Orientation</h2>
-		<pre id="orientationOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Batterie</h2>
+					<pre id="batteryOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Batterie</h2>
-		<pre id="batteryOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Microphone</h2>
+					<pre id="microOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Microphone</h2>
-		<pre id="microOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Caméra</h2>
+					<video id="cockpitVideo" width="640" height="480" autoplay></video>
+				</div>
 
-	<div class="sensor">
-		<h2>Caméra</h2>
-		<video id="cockpitVideo" width="640" height="480" autoplay></video>
-	</div>
+				<div class="sensor">
+					<h2>Lumière</h2>
+					<pre id="lightOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Lumière</h2>
-		<pre id="lightOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Heure</h2>
+					<pre id="timeOutput">En attente...</pre>
+				</div>
 
-	<div class="sensor">
-		<h2>Heure</h2>
-		<pre id="timeOutput">En attente...</pre>
-	</div>
-
-	<div class="sensor">
-		<h2>Réseau</h2>
-		<pre id="networkOutput">En attente...</pre>
-	</div>
+				<div class="sensor">
+					<h2>Réseau</h2>
+					<pre id="networkOutput">En attente...</pre>
+				</div>
+			</div>
+		</div>
+	</main>
 
 	<script>
 		const ws = new WebSocket("wss://smartphone-datas.onrender.com");
@@ -110,6 +135,19 @@
 			} else {
 				log("WebSocket pas ouverte pour " + name + ", réessai...");
 				setTimeout(() => sendSensor(name, data), 500);
+			}
+		}
+
+		// Toggle debug section
+		function toggleDebug() {
+			const content = document.getElementById('debugContent');
+			content.classList.toggle('hidden');
+
+			const arrow = document.querySelector('.title-arrow');
+			if (content.classList.contains('hidden')) {
+				arrow.textContent = "►"; // fermé
+			} else {
+				arrow.textContent = "▼"; // ouvert
 			}
 		}
 	</script>

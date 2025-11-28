@@ -1,20 +1,112 @@
-﻿body { 
-  font-family: sans-serif; 
-  padding: 20px; 
+﻿body {
+	font-family: sans-serif;
+	background: radial-gradient(circle at top left, rgba(95, 108, 124, 0.7), rgba(0, 0, 0, 0.8) 40%);
+	color: white;
+	margin: 0;
+	padding: 0;
 }
 
-h1 { 
-  margin-bottom: 10px; 
+h1 {
+	margin: 10px 0 0 15px;
 }
 
-pre { 
-  background: #f0f0f0; 
-  padding: 10px; 
-  border-radius: 5px; 
-  max-height: 200px; 
-  overflow-y: auto; 
+main {
+	padding: 20px;
+	padding-left: 30px;
+	margin-top: 70px;
 }
 
-.sensor { 
-  margin-bottom: 20px; 
+.entete {
+    position: fixed;
+    display: flex;
+    top: 0;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.bannier {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color:transparent;
+	background-color: rgba(0, 0, 0, 0.2); /* noir semi-transparent pour assombrir */
+    backdrop-filter: blur(30px);  /*flou */
+}
+
+pre {
+	background: #f0f0f0;
+	color: #333;
+	padding: 10px;
+	border-radius: 5px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.sensor {
+	margin-bottom: 20px;
+}
+
+.grid-container-widgets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes de largeur égale */
+    gap: 30px; /* espace entre les widgets */
+    padding: 10px;
+}
+
+.widget {
+    background-color: rgba(0, 0, 0, 0.315); /* noir avec 50% de transparence */
+    padding: 15px;
+    border-radius: 25px;
+	height: 500px;
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.35),  /* ombre principale plus prononcée */
+        0 4px 10px rgba(0, 0, 0, 0.2);    /* ombre secondaire pour le relief */
+    text-align: left;
+}
+
+.debug-container {
+	/* border: grey solid 1px; */
+	margin: 40px 10px 30px 10px;
+	padding: 20px;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.3);
+	box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.35),  /* ombre principale plus prononcée */
+        0 4px 10px rgba(0, 0, 0, 0.2);    /* ombre secondaire pour le relief */
+}
+
+.title-debug {
+    display: flex;
+    justify-content: space-between; /* texte à gauche, flèche à droite */
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding-left: 0px;
+	font-size: large;
+	color: gray;
+}
+.title-arrow {
+    transition: transform 0.3s ease;
+}
+
+/* rotation de la flèche lorsqu'on ferme */
+#debugContent.hidden + .title-debug .title-arrow {
+    transform: rotate(-90deg); /* ou 90deg selon flèche */
+}
+
+#debugContent {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    max-height: 2000px; /* assez grand pour tout le contenu ouvert */
+}
+
+#debugContent.hidden {
+    max-height: 0;
 }
