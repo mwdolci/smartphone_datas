@@ -16,16 +16,41 @@
 <body>
 	<main>
 		<div class = "grid-container-widgets">
-			<div class="widget">Localisation</div>
-			<div class="widget">Orientation</div>
-            <div class="widget">Boussole</div>
-			<div class="widget">Météo</div>
-            <div class="widget">Caméra</div>
-			<div class="widget">Micro</div>
-            <div class="widget">Batterie</div>
-            <div class="widget">Heure</div>
-            <div class="widget">Réseau</div>
-			<div class="widget">...</div>
+			<div class="widget" id="orientationWidget3D">
+				<h2>Orientation 3D</h2>
+			</div>
+			<div class="widget" id="orientationWidget">
+				<h2>Orientation 2D</h2>
+				<div class="car-container">
+					<img id="carTop" src="Images/car_top.png" alt="Car top">
+					<img id="carSide" src="Images/car_side.png" alt="Car side">
+					<img id="carBack" src="Images/car_back.png" alt="Car back">
+				</div>
+			</div>
+			<div class="widget" id="localisationWidget">
+				<h2>Localisation</h2>
+			</div>
+			<div class="widget" id="boussoleWidget">
+				<h2>Boussole</h2>
+			</div>
+			<div class="widget" id="meteoWidget">
+				<h2>Météo</h2>
+			</div>
+            <div class="widget" id="cameraWidget">
+				<h2>Caméra</h2>
+			</div>
+			<div class="widget" id="microWidget">
+				<h2>Micro</h2>
+			</div>
+            <div class="widget" id="batterieWidget">
+				<h2>Batterie</h2>
+			</div>
+            <div class="widget" id="heureWidget">
+				<h2>Heure</h2>
+			</div>
+            <div class="widget" id="reseauWidget">
+				<h2>Réseau</h2>
+			</div>
 		</div>
 
 		<div class = "debug-container">
@@ -95,11 +120,51 @@
 	<script>
 		const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
+		let lastAlpha = 0;
+		let lastBeta = 0;
+		let lastGamma = 0;
+		
 		// Affiche les logs dans la page
 		function log(msg) {
 			const pre = document.getElementById('logOutput');
 			pre.textContent += msg + "\n";
 			pre.scrollTop = pre.scrollHeight;
+		}
+
+		function smoothAlpha(alpha) {
+			let diff = alpha - lastAlpha;
+
+			// corrige les sauts > 180°
+			if (diff > 180) diff -= 360;
+			if (diff < -180) diff += 360;
+
+			// applique un lissage
+			lastAlpha += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			return lastAlpha;
+		}
+
+		function smoothBeta(beta) {
+			let diff = beta - lastBeta;
+
+			// corrige les sauts > 180°
+			if (diff > 180) diff -= 360;
+			if (diff < -180) diff += 360;
+
+			// applique un lissage
+			lastBeta += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			return lastBeta;
+		}
+
+		function smoothGamma(gamma) {
+			let diff = gamma - lastGamma;
+
+			// corrige les sauts > 180°
+			if (diff > 180) diff -= 360;
+			if (diff < -180) diff += 360;
+
+			// applique un lissage
+			lastGamma += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			return lastGamma;
 		}
 
 		// Gestion WebSocket
@@ -113,7 +178,27 @@
 				case "gps": document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "gyroscope": document.getElementById('gyroOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "orientation": document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2); break;
+				case "orientation":
+					document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
+
+					const carTop = document.getElementById("carTop");
+					const carSide = document.getElementById("carSide");
+					const carBack = document.getElementById("carBack");
+
+					const alpha = data.alpha || 0;		// rotation Z
+					const beta  = data.beta  || 0;   	// rotation X
+    				const gamma = data.gamma || 0;   	// rotation Y
+
+					const smoothAlphaValue = smoothAlpha(alpha);
+					const smoothGammaValue = smoothGamma(gamma);
+					const smoothBetaValue  = smoothBeta(beta);
+
+					carTop.style.transform = `rotateZ(${-smoothAlphaValue}deg)`;
+					carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
+					carBack.style.transform = `rotateZ(${smoothGammaValue}deg)`; 
+
+					break;
+
 				case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;

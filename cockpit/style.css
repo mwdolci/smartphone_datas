@@ -6,6 +6,11 @@
 	padding: 0;
 }
 
+* {
+    box-sizing: border-box;
+    /* border: #333 solid 2px; */
+}
+
 h1 {
 	margin: 10px 0 0 15px;
 }
@@ -69,6 +74,13 @@ pre {
     text-align: left;
 }
 
+.widget h2 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-size: 1em;
+    text-align: left;
+}
+
 .debug-container {
 	/* border: grey solid 1px; */
 	margin: 40px 10px 30px 10px;
@@ -110,3 +122,39 @@ pre {
 #debugContent.hidden {
     max-height: 0;
 }
+
+.car-container {
+    position: relative; /* indispensable pour que l'enfant absolute se réfère au container */
+    width: 100%;
+    height: 450px;
+}
+
+#carTop {
+    position: absolute;
+    top: 20%;   /* Positon vertical */
+    left: 20%;  /* Position horizontal */
+    width: 17%; /* taille */
+    height: auto;
+}
+
+#carSide {
+    position: absolute;
+    top: 15%;   /* Positon vertical */
+    left: 55%;  /* Position horizontal */
+    width: 40%; /* taille */
+    height: auto;
+}
+
+#carBack {
+    position: absolute;
+    top: 65%;   /* Positon vertical */
+    left: 65%;  /* Position horizontal */
+    width: 17%; /* taille */
+    height: auto;
+}
+
+#carTop, #carSide, #carBack {
+    transition: transform 0.1s linear; /* transition fluide pour la rotation */
+    transform-style: preserve-3d; /* pour un effet 3D fluide */
+}
+
