@@ -18,9 +18,11 @@
 		<div class = "grid-container-widgets">
 			<div class="widget" id="orientationWidget3D">
 				<h2>Orientation 3D</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
 			<div class="widget" id="orientationWidget">
 				<h2>Orientation 2D</h2>
+				<button class="fullscreen-btn">⤢</button>
 				<div class="car-container">
 					<img id="carTop" src="Images/car_top.png" alt="Car top">
 					<img id="carSide" src="Images/car_side.png" alt="Car side">
@@ -29,36 +31,44 @@
 			</div>
 			<div class="widget" id="localisationWidget">
 				<h2>Localisation</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
 			<div class="widget" id="boussoleWidget">
 				<h2>Boussole</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
 			<div class="widget" id="meteoWidget">
 				<h2>Météo</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
             <div class="widget" id="cameraWidget">
 				<h2>Caméra</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
 			<div class="widget" id="microWidget">
 				<h2>Micro</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
             <div class="widget" id="batterieWidget">
 				<h2>Batterie</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
             <div class="widget" id="heureWidget">
 				<h2>Heure</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
             <div class="widget" id="reseauWidget">
 				<h2>Réseau</h2>
+				<button class="fullscreen-btn">⤢</button>
 			</div>
 		</div>
 
 		<div class = "debug-container">
 			<h2 class="title-debug" onclick="toggleDebug()">
 				<span class="title-text">Debugeur</span>
-				<span class="title-arrow">▼</span>
+				<span class="title-arrow">►</span>
 			</h2>
-			<div id="debugContent">
+			<div id="debugContent" class="hidden">
 				<div class="sensor">
 					<h2>Logs WebSocket</h2>
 					<pre id="logOutput">En attente de connexion...</pre>
@@ -235,6 +245,21 @@
 				arrow.textContent = "▼"; // ouvert
 			}
 		}
+		
+		// Fullscreen button functionality
+		document.querySelectorAll('.fullscreen-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			const widget = btn.closest('.widget');
+			const isFullscreen = widget.classList.toggle('fullscreen');
+
+			// Bloquer/débloquer le scroll de la page
+			if (isFullscreen) {
+				document.body.style.overflow = 'hidden'; // plus de scroll
+			} else {
+				document.body.style.overflow = '';       // scroll normal
+			}
+		});
+	});
 	</script>
 </body>
 

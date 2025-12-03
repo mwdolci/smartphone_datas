@@ -30,6 +30,7 @@ main {
     height: 60px;
     width: 100%;
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    z-index: 100;
 }
 
 .bannier {
@@ -76,9 +77,48 @@ pre {
 
 .widget h2 {
     margin-top: 0;
-    margin-bottom: 0.5em;
+    margin-bottom: 0;
     font-size: 1em;
     text-align: left;
+}
+
+.widget {
+    position: relative;
+    transition: all 0.5s ease-in-out; /* transition sur tout */
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0); /* fond transparent par défaut */
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 8px;
+}
+
+/* effet au survol */
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.2); /* fond semi-transparent */
+    transform: scale(1.2); /* léger agrandissement */
+}
+
+.widget.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px;
+    background: radial-gradient(circle at top left, rgba(95, 108, 124, 1), rgba(0, 0, 0, 1) 40%);
+    transition: all 0.5s ease-in-out; /* animation fluide */
 }
 
 .debug-container {
@@ -126,7 +166,7 @@ pre {
 .car-container {
     position: relative; /* indispensable pour que l'enfant absolute se réfère au container */
     width: 100%;
-    height: 450px;
+    height: 100%;
 }
 
 #carTop {
