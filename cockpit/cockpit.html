@@ -32,9 +32,9 @@
 				<h2>Orientation 2D</h2>
 				<button class="fullscreen-btn">⤢</button>
 				<div class="car-container">
-					<img id="carTop" src="Images/car_top.png" alt="Car top">
-					<img id="carSide" src="Images/car_side.png" alt="Car side">
-					<img id="carBack" src="Images/car_back.png" alt="Car back">
+					<img id="carTop" src="Images/car_top_2.png" alt="Car top">
+					<img id="carSide" src="Images/car_side_2.png" alt="Car side">
+					<img id="carBack" src="Images/car_back_2.png" alt="Car back">
 				</div>
 			</div>
 			<div class="widget" id="localisationWidget">
@@ -93,11 +93,6 @@
 				</div>
 
 				<div class="sensor">
-					<h2>Gyroscope</h2>
-					<pre id="gyroOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
 					<h2>Orientation</h2>
 					<pre id="orientationOutput">En attente...</pre>
 				</div>
@@ -115,11 +110,6 @@
 				<div class="sensor">
 					<h2>Caméra</h2>
 					<video id="cockpitVideo" width="640" height="480" autoplay></video>
-				</div>
-
-				<div class="sensor">
-					<h2>Lumière</h2>
-					<pre id="lightOutput">En attente...</pre>
 				</div>
 
 				<div class="sensor">
@@ -195,7 +185,6 @@
 			switch (msg.capteur) {
 				case "gps": document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "gyroscope": document.getElementById('gyroOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "orientation":
 					document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
 
@@ -222,7 +211,6 @@
 				case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;
-				case "light": document.getElementById('lightOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "time": document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); break;
 				case "network": document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); break;
 				default: break;
