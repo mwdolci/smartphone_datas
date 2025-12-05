@@ -25,9 +25,6 @@
         <button onclick="startAccelerometer()">Accéléromètre</button>
         <pre id="accelOutput">En attente...</pre>
 
-        <button onclick="startGyroscope()">Gyroscope</button>
-        <pre id="gyroOutput">En attente...</pre>
-
         <button onclick="startOrientation()">Orientation</button>
         <pre id="orientationOutput">En attente...</pre>
 
@@ -39,9 +36,6 @@
 
         <button onclick="startCamera()">Caméra</button>
         <video id="cameraVideo" width="180" height="auto" autoplay></video>
-
-        <button onclick="startLight()">Lumière ambiante</button>
-        <pre id="lightOutput">En attente...</pre>
 
         <button onclick="startTime()">Heure</button>
         <pre id="timeOutput">En attente...</pre>
@@ -106,18 +100,6 @@
                 };
                 document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("accelerometre", data);
-            });
-        }
-
-        function startGyroscope() {
-            window.addEventListener('deviceorientation', event => {
-                const data = {
-                    alpha: event.alpha,
-                    beta: event.beta,
-                    gamma: event.gamma
-                };
-                document.getElementById('gyroOutput').textContent = JSON.stringify(data, null, 2);
-                sendSensor("gyroscope", data);
             });
         }
 
@@ -238,12 +220,10 @@
         function startAll() {
             startGPS();
             startAccelerometer();
-            startGyroscope();
             startOrientation();
             startBattery();
             startMicro();
             startCamera();
-            startLight();
             startTime();
             startNetwork();
         }

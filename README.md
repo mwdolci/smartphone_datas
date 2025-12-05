@@ -1,10 +1,9 @@
 # 🖥️ SmartCockpit
 
 ## 👥 Auteurs
-**Dolci Marco**
+**Dolci Marco**  
 **Debons Christophe** 
 **Akram Ayman** 
-**Mengotti Alexandre** 
   
 *Les contributions externes sont les bienvenues via Pull Request.*
 
@@ -29,10 +28,10 @@ L’objectif est d’offrir un tableau de bord clair et réactif pour visualiser
 
 ### 🖥️ Sur le PC (cockpit)
 
-1. Ouvrez la page **`cockpit.html`**
+1. Ouvrez la page **`cockpit.html`** avec live server
 2. Observez en temps réel les données envoyées par le smartphone.
 
-Aucune installation nécessaire. La communication se fait via **WebSocket**.
+Aucune installation nécessaire. L’application communique via un WebSocket avec un serveur Node.js hébergé sur Render.com.
 
 ---
 
