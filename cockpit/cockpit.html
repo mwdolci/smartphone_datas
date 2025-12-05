@@ -131,6 +131,7 @@
 		let lastAlpha = 0;
 		let lastBeta = 0;
 		let lastGamma = 0;
+		const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
 		
 		// Affiche les logs dans la page
 		function log(msg) {
@@ -147,7 +148,7 @@
 			if (diff < -180) diff += 360;
 
 			// applique un lissage
-			lastAlpha += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
 			return lastAlpha;
 		}
 
@@ -159,7 +160,7 @@
 			if (diff < -180) diff += 360;
 
 			// applique un lissage
-			lastBeta += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
 			return lastBeta;
 		}
 
@@ -171,7 +172,7 @@
 			if (diff < -180) diff += 360;
 
 			// applique un lissage
-			lastGamma += diff * 0.1; // 0.1 = vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+			lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
 			return lastGamma;
 		}
 
@@ -288,6 +289,7 @@
 		loader.load("Images/car.glb", gltf => {
 			car3D = gltf.scene;
 			car3D.scale.set(0.5, 0.5, 0.5);
+			
 			scene.add(car3D);
 		});
 
@@ -305,16 +307,16 @@
 
 		function updateCar3D(alpha, beta, gamma) {
 			if (!car3D) return;
-			const a = THREE.MathUtils.degToRad(alpha);
-			const b = THREE.MathUtils.degToRad(beta);
-			const c = THREE.MathUtils.degToRad(gamma);
 
-			// offsets pour que la voiture ait le nez vers l'avant et le toit vers le ciel
-			const offsetX = -Math.PI / 2; // penche le modèle sur X
-			const offsetY = 0;
-			const offsetZ = 0;
+			const a = THREE.MathUtils.degToRad(smoothAlpha(alpha));
+			const b = THREE.MathUtils.degToRad(smoothBeta(beta));
+			const c = THREE.MathUtils.degToRad(smoothGamma(gamma));
 
-			car3D.rotation.set(b + offsetX, a + offsetY, -c + offsetZ);
+			const euler = new THREE.Euler(-b, a + Math.PI, -c, 'ZYX');
+			const targetQuat = new THREE.Quaternion().setFromEuler(euler);
+
+			// lissage de la rotation
+			car3D.quaternion.slerp(targetQuat, 0.1); 
 		}
 
 		// Expose la fonction pour le WebSocket

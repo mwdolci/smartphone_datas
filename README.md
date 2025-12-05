@@ -2,7 +2,7 @@
 
 ## 👥 Auteurs
 **Dolci Marco**  
-**Debons Christophe** 
+**Debons Christophe**  
 **Akram Ayman** 
   
 *Les contributions externes sont les bienvenues via Pull Request.*
