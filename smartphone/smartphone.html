@@ -6,7 +6,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
     <title>SmartCoskpitSensor</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background: radial-gradient(circle at top left, rgba(95, 108, 124, 0.7), rgba(0, 0, 0, 0.8) 40%);
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 22px 0 0 15px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        main {
+            
+            margin: 80px 10px 30px 10px;
+            width: calc(100% - 20px);
+            align-content: center;
+            text-align: center ;
+        }
+
+        .entete {
+            position: fixed;
+            display: flex;
+            top: 0;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .bannier {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background-color:transparent;
+            background-color: rgba(0, 0, 0, 0.2); /* noir semi-transparent pour assombrir */
+            backdrop-filter: blur(30px);  /*flou */
+        }
+
+        pre {
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: calc(100% - 50px);
+            margin-bottom: 30px;
+            text-align: left ;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        video {
+            display: block;
+            width: calc(100% - 50px);
+            margin-top: 10px; 
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            z-index: -1;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sensor {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            text-decoration: none;
+            width: calc(100% - 50px);
+        }
+
+        /* * {
+        outline: 1px solid rgba(157, 255, 0, 0.2); 
+        } */
+    </style>
 </head>
 
 <header class="entete">
