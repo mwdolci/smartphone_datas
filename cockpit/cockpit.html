@@ -6,7 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
 	<title>SmartCockpit</title>
-	<link rel="stylesheet" href="Style.css">
+	<link rel="stylesheet" href="static/css/Style.css">
+	<script src="static/js/cockpit.js"></script>
+	
 	<script type="importmap">
 	{
 		"imports": {
@@ -24,304 +26,53 @@
 	<main>
 		<div class = "grid-container-widgets">
 			<div class="widget" id="orientationWidget3D">
-				<h2>Orientation 3D</h2>
-				<button class="fullscreen-btn">⤢</button>
-				<div id="car3DContainer" style="width:100%; height:90%;"></div>
+				<script>loadWidget("widgets/widget-orientation3D.html", "orientationWidget3D")</script>
 			</div>
 			<div class="widget" id="orientationWidget">
-				<h2>Orientation 2D</h2>
-				<button class="fullscreen-btn">⤢</button>
-				<div class="car-container">
-					<img id="carTop" src="Images/car_top_2.png" alt="Car top">
-					<img id="carSide" src="Images/car_side_2.png" alt="Car side">
-					<img id="carBack" src="Images/car_back_2.png" alt="Car back">
-				</div>
+				<script>loadWidget("widgets/widget-orientation2D.html", "orientationWidget")</script>
 			</div>
 			<div class="widget" id="localisationWidget">
-				<h2>Localisation</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-localisation.html", "localisationWidget")</script>
 			</div>
 			<div class="widget" id="boussoleWidget">
-				<h2>Boussole</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-boussole.html", "boussoleWidget")</script>
 			</div>
 			<div class="widget" id="meteoWidget">
-				<h2>Météo</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-meteo.html", "meteoWidget")</script>
 			</div>
             <div class="widget" id="cameraWidget">
-				<h2>Caméra</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-camera.html", "cameraWidget")</script>
 			</div>
 			<div class="widget" id="microWidget">
-				<h2>Micro</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-micro.html", "microWidget")</script>
 			</div>
             <div class="widget" id="batterieWidget">
-				<h2>Batterie</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-batterie.html", "batterieWidget")</script>
 			</div>
             <div class="widget" id="heureWidget">
-				<h2>Heure</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-heure.html", "heureWidget")</script>
 			</div>
             <div class="widget" id="reseauWidget">
-				<h2>Réseau</h2>
-				<button class="fullscreen-btn">⤢</button>
+				<script>loadWidget("widgets/widget-reseau.html", "reseauWidget")</script>
 			</div>
 		</div>
 
-		<div class = "debug-container">
-			<h2 class="title-debug" onclick="toggleDebug()">
-				<span class="title-text">Debugeur</span>
-				<span class="title-arrow">►</span>
-			</h2>
-			<div id="debugContent" class="hidden">
-				<div class="sensor">
-					<h2>Logs WebSocket</h2>
-					<pre id="logOutput">En attente de connexion...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>GPS</h2>
-					<pre id="gpsOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Accéléromètre</h2>
-					<pre id="accelOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Orientation</h2>
-					<pre id="orientationOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Batterie</h2>
-					<pre id="batteryOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Microphone</h2>
-					<pre id="microOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Caméra</h2>
-					<video id="cockpitVideo" width="640" height="480" autoplay></video>
-				</div>
-
-				<div class="sensor">
-					<h2>Heure</h2>
-					<pre id="timeOutput">En attente...</pre>
-				</div>
-
-				<div class="sensor">
-					<h2>Réseau</h2>
-					<pre id="networkOutput">En attente...</pre>
-				</div>
-			</div>
+		<div class = "debug-container" id="debugWidget">
+			<script>loadWidget("widgets/widget-debug.html", "debugWidget")</script>
 		</div>
 	</main>
 
-	<script>
-		const ws = new WebSocket("wss://smartphone-datas.onrender.com");
+	<script src="static/js/widget-batterie.js"></script>
+	<script src="static/js/widget-boussole.js"></script>
+	<script src="static/js/widget-camera.js"></script>
+	<script src="static/js/widget-heure.js"></script>
+	<script src="static/js/widget-localisation.js"></script>
+	<script src="static/js/widget-meteo.js"></script>
+	<script src="static/js/widget-micro.js"></script>
+	<script type="module" src="static/js/widget-orientation.js"></script>
+	<script src="static/js/widget-reseau.js"></script>
 
-		let lastAlpha = 0;
-		let lastBeta = 0;
-		let lastGamma = 0;
-		const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
-		
-		// Affiche les logs dans la page
-		function log(msg) {
-			const pre = document.getElementById('logOutput');
-			pre.textContent += msg + "\n";
-			pre.scrollTop = pre.scrollHeight;
-		}
-
-		function smoothAlpha(alpha) {
-			let diff = alpha - lastAlpha;
-
-			// corrige les sauts > 180°
-			if (diff > 180) diff -= 360;
-			if (diff < -180) diff += 360;
-
-			// applique un lissage
-			lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-			return lastAlpha;
-		}
-
-		function smoothBeta(beta) {
-			let diff = beta - lastBeta;
-
-			// corrige les sauts > 180°
-			if (diff > 180) diff -= 360;
-			if (diff < -180) diff += 360;
-
-			// applique un lissage
-			lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-			return lastBeta;
-		}
-
-		function smoothGamma(gamma) {
-			let diff = gamma - lastGamma;
-
-			// corrige les sauts > 180°
-			if (diff > 180) diff -= 360;
-			if (diff < -180) diff += 360;
-
-			// applique un lissage
-			lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-			return lastGamma;
-		}
-
-		// Gestion WebSocket
-		ws.onopen = () => log("WebSocket ouverte !");
-		ws.onmessage = event => {
-			const msg = JSON.parse(event.data);
-			log("Reçu : " + JSON.stringify(msg));
-			const data = msg.data;
-
-			switch (msg.capteur) {
-				case "gps": document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "orientation":
-					document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
-
-					const carTop = document.getElementById("carTop");
-					const carSide = document.getElementById("carSide");
-					const carBack = document.getElementById("carBack");
-
-					const alpha = data.alpha || 0;		// rotation Z
-					const beta  = data.beta  || 0;   	// rotation X
-    				const gamma = data.gamma || 0;   	// rotation Y
-
-					const smoothAlphaValue = smoothAlpha(alpha);
-					const smoothGammaValue = smoothGamma(gamma);
-					const smoothBetaValue  = smoothBeta(beta);
-
-					carTop.style.transform = `rotateZ(${-smoothAlphaValue}deg)`;
-					carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
-					carBack.style.transform = `rotateZ(${smoothGammaValue}deg)`; 
-
-					updateCar3D(alpha, beta, gamma);
-
-					break;
-
-				case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;
-				case "time": document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); break;
-				case "network": document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); break;
-				default: break;
-			}
-		};
-
-		ws.onerror = e => log("Erreur WebSocket : " + e);
-		ws.onclose = e => log("WebSocket fermée.");
-
-		// Fonction pour envoyer les données depuis le smartphone
-		function sendSensor(name, data) {
-			if (ws.readyState === WebSocket.OPEN) {
-				ws.send(JSON.stringify({ capteur: name, data }));
-				log("Envoyé : " + name);
-			} else {
-				log("WebSocket pas ouverte pour " + name + ", réessai...");
-				setTimeout(() => sendSensor(name, data), 500);
-			}
-		}
-
-		// Toggle debug section
-		function toggleDebug() {
-			const content = document.getElementById('debugContent');
-			content.classList.toggle('hidden');
-
-			const arrow = document.querySelector('.title-arrow');
-			if (content.classList.contains('hidden')) {
-				arrow.textContent = "►"; // fermé
-			} else {
-				arrow.textContent = "▼"; // ouvert
-			}
-		}
-		
-		// Fullscreen button functionality
-		document.querySelectorAll('.fullscreen-btn').forEach(btn => {
-		btn.addEventListener('click', () => {
-			const widget = btn.closest('.widget');
-			const isFullscreen = widget.classList.toggle('fullscreen');
-
-			// Bloquer/débloquer le scroll de la page
-			if (isFullscreen) {
-				document.body.style.overflow = 'hidden'; // plus de scroll
-			} else {
-				document.body.style.overflow = '';       // scroll normal
-			}
-		});
-	});
-	</script>
-	<script type="module">
-		import * as THREE from 'three';
-    	import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-
-		const container3D = document.getElementById("car3DContainer");
-		const scene = new THREE.Scene();
-		scene.background = null;
-
-		const camera = new THREE.PerspectiveCamera(45, container3D.clientWidth / container3D.clientHeight, 0.1, 1000);
-		camera.position.set(0, 50, 300);
-
-		const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-		renderer.setSize(container3D.clientWidth, container3D.clientHeight);
-		container3D.appendChild(renderer.domElement);
-
-		const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-		scene.add(light);
-
-		const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-		dirLight.position.set(3, 3, 3);
-		scene.add(dirLight);
-
-		const loader = new GLTFLoader();
-		let car3D;
-
-		loader.load("Images/car.glb", gltf => {
-			car3D = gltf.scene;
-			car3D.scale.set(0.5, 0.5, 0.5);
-			
-			scene.add(car3D);
-		});
-
-		window.addEventListener("resize", () => {
-			camera.aspect = container3D.clientWidth / container3D.clientHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize(container3D.clientWidth, container3D.clientHeight);
-		});
-
-		function animate3D() {
-			requestAnimationFrame(animate3D);
-			renderer.render(scene, camera);
-		}
-		animate3D();
-
-		function updateCar3D(alpha, beta, gamma) {
-			if (!car3D) return;
-
-			const a = THREE.MathUtils.degToRad(smoothAlpha(alpha));
-			const b = THREE.MathUtils.degToRad(smoothBeta(beta));
-			const c = THREE.MathUtils.degToRad(smoothGamma(gamma));
-
-			const euler = new THREE.Euler(-b, a + Math.PI, -c, 'ZYX');
-			const targetQuat = new THREE.Quaternion().setFromEuler(euler);
-
-			// lissage de la rotation
-			car3D.quaternion.slerp(targetQuat, 0.1); 
-		}
-
-		// Expose la fonction pour le WebSocket
-		window.updateCar3D = updateCar3D;
-</script>
+	<script src="static/js/webSocket.js"></script>
 </body>
 
-</html>
+</html>-
