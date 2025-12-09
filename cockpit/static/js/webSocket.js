@@ -8,8 +8,8 @@ const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
 // Affiche les logs dans la page
 function log(msg) {
     const pre = document.getElementById('logOutput');
-    pre.textContent += msg + "\n";
-    pre.scrollTop = pre.scrollHeight;
+    pre.textContent += msg + "\n";      // Ajoute le message au contenu existant
+    pre.scrollTop = pre.scrollHeight;   // Scroll automatique vers le bas
 }
 
 function smoothAlpha(alpha) {
