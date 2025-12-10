@@ -51,32 +51,3 @@ function sendSensor(name, data) {
         setTimeout(() => sendSensor(name, data), 500);
     }
 }
-
-// Toggle debug section
-function toggleDebug() {
-    const content = document.getElementById('debugContent');
-    const arrow = document.querySelector('.title-arrow');
-
-    if (!content || !arrow) {
-        console.error("Éléments debugContent ou title-arrow introuvables !");
-        return;
-    }
-
-    content.classList.toggle('hidden');
-    arrow.textContent = content.classList.contains('hidden') ? "►" : "▼";
-}
-
-// Fullscreen button functionality
-document.querySelectorAll('.fullscreen-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-    const widget = btn.closest('.widget');
-    const isFullscreen = widget.classList.toggle('fullscreen');
-
-    // Bloquer/débloquer le scroll de la page
-    if (isFullscreen) {
-        document.body.style.overflow = 'hidden'; // plus de scroll
-    } else {
-        document.body.style.overflow = '';       // scroll normal
-    }
-});
-});
