@@ -1,51 +1,10 @@
 const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
-let lastAlpha = 0;
-let lastBeta = 0;
-let lastGamma = 0;
-const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
-
 // Affiche les logs dans la page
 function log(msg) {
     const pre = document.getElementById('logOutput');
     pre.textContent += msg + "\n";      // Ajoute le message au contenu existant
     pre.scrollTop = pre.scrollHeight;   // Scroll automatique vers le bas
-}
-
-function smoothAlpha(alpha) {
-    let diff = alpha - lastAlpha;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastAlpha;
-}
-
-function smoothBeta(beta) {
-    let diff = beta - lastBeta;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastBeta;
-}
-
-function smoothGamma(gamma) {
-    let diff = gamma - lastGamma;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastGamma;
 }
 
 // Gestion WebSocket
@@ -61,22 +20,11 @@ ws.onmessage = event => {
         case "orientation":
             document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
 
-            const carTop = document.getElementById("carTop");
-            const carSide = document.getElementById("carSide");
-            const carBack = document.getElementById("carBack");
-
             const alpha = data.alpha || 0;		// rotation Z
             const beta  = data.beta  || 0;   	// rotation X
             const gamma = data.gamma || 0;   	// rotation Y
 
-            const smoothAlphaValue = smoothAlpha(alpha);
-            const smoothGammaValue = smoothGamma(gamma);
-            const smoothBetaValue  = smoothBeta(beta);
-
-            carTop.style.transform = `rotateZ(${-smoothAlphaValue}deg)`;
-            carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
-            carBack.style.transform = `rotateZ(${smoothGammaValue}deg)`; 
-
+            updateCar2D(alpha, beta, gamma);
             updateCar3D(alpha, beta, gamma);
 
             break;

@@ -1,6 +1,61 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+let lastAlpha = 0;
+let lastBeta = 0;
+let lastGamma = 0;
+const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
+
+function smoothAlpha(alpha) {
+    let diff = alpha - lastAlpha;
+
+    // corrige les sauts > 180°
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    // applique un lissage
+    lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+    return lastAlpha;
+}
+
+function smoothBeta(beta) {
+    let diff = beta - lastBeta;
+
+    // corrige les sauts > 180°
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    // applique un lissage
+    lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+    return lastBeta;
+}
+
+function smoothGamma(gamma) {
+    let diff = gamma - lastGamma;
+
+    // corrige les sauts > 180°
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    // applique un lissage
+    lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
+    return lastGamma;
+}
+
+function updateCar2D(alpha, beta, gamma) {
+    const carTop = document.getElementById("carTop");
+    const carSide = document.getElementById("carSide");
+    const carBack = document.getElementById("carBack");
+
+    const smoothAlphaValue = smoothAlpha(alpha);
+    const smoothBetaValue  = smoothBeta(beta);
+    const smoothGammaValue = smoothGamma(gamma);
+
+    carTop.style.transform  = `rotateZ(${-smoothAlphaValue}deg)`;
+    carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
+    carBack.style.transform = `rotateZ(${smoothGammaValue}deg)`; 
+}
+
 // Conteneur 3D
 const container3D = document.getElementById("car3DContainer");
 const scene = new THREE.Scene();
@@ -66,4 +121,5 @@ function updateCar3D(alpha, beta, gamma) {
 }
 
 // Expose la fonction pour le WebSocket
+window.updateCar2D = updateCar2D; // Permet d'appeler updateCar2D depuis d'autres fichiers JS
 window.updateCar3D = updateCar3D; // Permet d'appeler updateCar3D depuis d'autres fichiers JS
