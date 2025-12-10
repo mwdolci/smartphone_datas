@@ -4,52 +4,45 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 let lastAlpha = 0;
 let lastBeta = 0;
 let lastGamma = 0;
-const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
+let lastUpdate2D = 0;
+const interval2D = 100; // ms, limite la fréquence pour la 2D
 
-function smoothAlpha(alpha) {
+function jumpAlpha(alpha) {
     let diff = alpha - lastAlpha;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastAlpha;
+    if (diff > 180) alpha -= 360;
+    if (diff < -180) alpha += 360;
+    lastAlpha = alpha;
+    return alpha;
 }
 
-function smoothBeta(beta) {
+function jumpBeta(beta) {
     let diff = beta - lastBeta;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastBeta;
+    if (diff > 180) beta -= 360;
+    if (diff < -180) beta += 360;
+    lastBeta = beta;
+    return beta;
 }
 
-function smoothGamma(gamma) {
+function jumpGamma(gamma) {
     let diff = gamma - lastGamma;
-
-    // corrige les sauts > 180°
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    // applique un lissage
-    lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-    return lastGamma;
+    if (diff > 180) gamma -= 360;
+    if (diff < -180) gamma += 360;
+    lastGamma = gamma;
+    return gamma;
 }
 
 function updateCar2D(alpha, beta, gamma) {
+    const now = Date.now();
+    if (now - lastUpdate2D < interval2D) return; // ignore si trop rapide -> evite saccades
+    lastUpdate2D = now;
+
     const carTop = document.getElementById("carTop");
     const carSide = document.getElementById("carSide");
     const carBack = document.getElementById("carBack");
 
-    const smoothAlphaValue = smoothAlpha(alpha);
-    const smoothBetaValue  = smoothBeta(beta);
-    const smoothGammaValue = smoothGamma(gamma);
+    const smoothAlphaValue = jumpAlpha(alpha);
+    const smoothBetaValue  = jumpBeta(beta);
+    const smoothGammaValue = jumpGamma(gamma);
 
     carTop.style.transform  = `rotateZ(${-smoothAlphaValue}deg)`;
     carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
@@ -109,15 +102,14 @@ animate3D();
 function updateCar3D(alpha, beta, gamma) {
     if (!car3D) return;
 
-    const a = THREE.MathUtils.degToRad(smoothAlpha(alpha));
-    const b = THREE.MathUtils.degToRad(smoothBeta(beta));
-    const c = THREE.MathUtils.degToRad(smoothGamma(gamma));
+    const a = THREE.MathUtils.degToRad(jumpAlpha(alpha));
+    const b = THREE.MathUtils.degToRad(jumpBeta(beta));
+    const c = THREE.MathUtils.degToRad(jumpGamma(gamma));
 
     const euler = new THREE.Euler(-b, a + Math.PI, -c, 'ZYX'); // Ordre des rotations
     const targetQuat = new THREE.Quaternion().setFromEuler(euler); // Crée un quaternion à partir des angles d'Euler (quaternion = indique une rotation dans l'espace 3D)
 
-    // lissage de la rotation
-    car3D.quaternion.slerp(targetQuat, 0.1); 
+    car3D.quaternion.copy(targetQuat);
 }
 
 // Expose la fonction pour le WebSocket
