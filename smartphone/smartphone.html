@@ -163,7 +163,35 @@
             setInterval(() => sendSensor("test", { msg: "Hello cockpit !" }), 1000);
         };
 
-        ws.onmessage = e => log("Reçu du serveur : " + e.data);
+        // vérifier si webrtc message arrive (answer ou ice)
+        ws.addEventListener("message", event => {
+            log("Reçu du serveur : " + event.data);
+
+            let msg;
+            try {
+                msg = JSON.parse(event.data);
+            } catch {
+                return; // message non json -> message normal
+            }
+
+            // Answer du cockpit
+            if (msg.type === "answer") {
+                if (!peerConnection) {
+                    log("Answer reçue mais peerConnection pas encore créé.");
+                    return;
+                }
+                peerConnection.setRemoteDescription(msg.answer);
+            }
+
+            // ICE du cockpit
+            if (msg.type === "ice") {
+                if (!peerConnection) {
+                    log("ICE reçu mais peerConnection pas encore créé.");
+                    return;
+                }
+                peerConnection.addIceCandidate(msg.candidate);
+            }
+        });
         ws.onerror = e => log("Erreur WebSocket : " + e);
         ws.onclose = e => log("WebSocket fermée.");
 
@@ -182,6 +210,36 @@
                 },
                 error => console.error("Erreur GPS :", error)
             );
+        }
+
+        // --- WebRTC ---
+        let peerConnection;
+        let videoStream;
+
+        function startWebRTC() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+
+                document.getElementById("cameraVideo").srcObject = stream;
+
+                peerConnection = new RTCPeerConnection();
+
+                // Ajout des pistes
+                stream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, stream);
+                });
+
+                // ICE
+                peerConnection.onicecandidate = event => {
+                    if (event.candidate) {
+                        ws.send(JSON.stringify({ type: "ice", candidate: event.candidate }));
+                    }
+                };
+
+                peerConnection.createOffer().then(offer => {
+                    peerConnection.setLocalDescription(offer);
+                    ws.send(JSON.stringify({ type: "offer", offer }));
+                });
+            });
         }
 
         function startAccelerometer() {
@@ -259,14 +317,7 @@
         }
 
         function startCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Caméra non supportée"); return; }
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    const video = document.getElementById('cameraVideo');
-                    video.srcObject = stream;
-                    sendSensor("camera", { status: "streaming" });
-                })
-                .catch(err => console.error("Erreur caméra :", err));
+            startWebRTC();
         }
 
         function startTime() {
