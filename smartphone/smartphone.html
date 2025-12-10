@@ -197,11 +197,16 @@
 
         function startOrientation() {
             window.addEventListener('deviceorientation', event => {
+                // Arrondit les valeurs à 2 décimales pour réduire le flux de données
+                const alpha = Math.round(event.alpha * 100) / 100;
+                const beta  = Math.round(event.beta  * 100) / 100;
+                const gamma = Math.round(event.gamma * 100) / 100;
+
                 const data = {
                     absolute: event.absolute,
-                    alpha: event.alpha,
-                    beta: event.beta,
-                    gamma: event.gamma
+                    alpha,
+                    beta,
+                    gamma
                 };
                 document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("orientation", data);
