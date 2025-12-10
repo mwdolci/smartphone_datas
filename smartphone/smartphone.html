@@ -197,7 +197,7 @@
 
         function startOrientation() {
             let lastSent = 0;
-            const interval = 100; // ms --> toutes les 100ms (10 fois/s)
+            const interval = 30; // ms --> toutes les 30ms (environ 33 fois/s)
 
             window.addEventListener('deviceorientation', event => {
                 const now = Date.now();
