@@ -16,3 +16,4 @@ function loadWidget(file, containerId) {
       console.error("Erreur lors du chargement du widget :", error);
       document.getElementById(containerId).innerHTML = "<p>Impossible de charger le widget.</p>";
     });
+}
