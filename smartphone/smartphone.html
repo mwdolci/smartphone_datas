@@ -196,7 +196,15 @@
         }
 
         function startOrientation() {
+            let lastSent = 0;
+            const interval = 100; // ms --> toutes les 100ms (10 fois/s)
+
             window.addEventListener('deviceorientation', event => {
+                const now = Date.now();
+                if (now - lastSent < interval) return; // ignore si trop rapide
+
+                lastSent = now;
+
                 const data = {
                     absolute: event.absolute,
                     alpha: event.alpha,
@@ -262,22 +270,6 @@
                     sendSensor("camera", { status: "streaming" });
                 })
                 .catch(err => console.error("Erreur caméra :", err));
-        }
-
-        function startLight() {
-            if (!('AmbientLightSensor' in window)) { alert("Capteur lumière non supporté"); return; }
-            try {
-                const sensor = new AmbientLightSensor({ frequency: 1 });
-                sensor.addEventListener('reading', () => {
-                    const data = { illuminance: sensor.illuminance };
-                    document.getElementById('lightOutput').textContent = JSON.stringify(data, null, 2);
-                    sendSensor("light", data);
-                });
-                sensor.addEventListener('error', event => document.getElementById('lightOutput').textContent = 'Erreur lumière: ' + event.error.name);
-                sensor.start();
-            } catch (e) {
-                document.getElementById('lightOutput').textContent = 'Erreur lumière: ' + e.message;
-            }
         }
 
         function startTime() {
