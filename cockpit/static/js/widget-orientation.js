@@ -54,6 +54,173 @@ const container3D = document.getElementById("car3DContainer");
 const scene = new THREE.Scene();
 scene.background = null;
 
+// Normalisation du modèle 3D
+function normalizeModel(model, targetSize = 150) {
+    // Calcul de la bounding box
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+
+    // Ajuste l'échelle pour unifier la taille
+    const scaleFactor = targetSize / maxDim;
+    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+    // Recalcul de la bounding box après l'échelle
+    box.setFromObject(model);
+
+    // Centre horizontalement (X et Z)
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    model.position.x -= center.x;
+    model.position.z -= center.z;
+
+    // Aligne le bas du modèle sur Y = 0
+    const minY = box.min.y;
+    model.position.y -= minY; 
+}
+
+// Sélecteur de modèle
+const model2DImages = {
+    "car.glb": {
+        top: "assets/images/car_top_2.png",
+        side: "assets/images/car_side_2.png",
+        back: "assets/images/car_back_2.png"
+    },
+    "car_3.glb": {
+        top: "assets/images/car_top_3.png",
+        side: "assets/images/car_side_3.png",
+        back: "assets/images/car_back_3.png"
+    },
+    "car_5.glb": {
+        top: "assets/images/car_top_5.png",
+        side: "assets/images/car_side_5.png",
+        back: "assets/images/car_back_5.png"
+    }
+    ,
+    "Moto_2.glb": {
+        top: "assets/images/moto_top_2.png",
+        side: "assets/images/moto_side_2.png",
+        back: "assets/images/moto_back_2.png"
+    },
+    "Trotinette_2.glb": {
+        top: "assets/images/trotinette_top_2.png",
+        side: "assets/images/trotinette_side_2.png",
+        back: "assets/images/trotinette_back_2.png"
+    },
+    "Jet.glb": {
+        top: "assets/images/jet_top.png",
+        side: "assets/images/jet_side.png",
+        back: "assets/images/jet_back.png"
+    },
+    "Rover.glb": {
+        top: "assets/images/rover_top.png",
+        side: "assets/images/rover_side.png",
+        back: "assets/images/rover_back.png"
+    },    
+    "Smartphone.glb": {
+        top: "assets/images/smartphone_top.png",
+        side: "assets/images/smartphone_side.png",
+        back: "assets/images/smartphone_back.png"
+    }
+};
+
+function updateCar2DImages(modelName) {
+    const images = model2DImages[modelName];
+    if (!images) return;
+
+    const carTop = document.getElementById("carTop");
+    const carSide = document.getElementById("carSide");
+    const carBack = document.getElementById("carBack");
+
+    if (carTop) carTop.src = images.top;
+    if (carSide) carSide.src = images.side;
+    if (carBack) carBack.src = images.back;
+}
+
+// Configuration des modèles avec leurs rotations initiales et positions de caméra
+const modelConfigs = {
+    "car.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },  // en degrés
+        cameraPosition: { x: 0, y: 50, z: 300 }
+    },
+    "car_3.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },
+        cameraPosition: { x: 0, y: 50, z: 300 }
+    }
+    ,
+    "car_5.glb": {
+        initialRotation: { x: 10, y: 210, z: 0 },
+        cameraPosition: { x: 0, y: 60, z: 300 }
+    },
+    "Moto_2.glb": {
+        initialRotation: { x: 10, y: 210, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 350 }
+    },
+    "Trotinette_2.glb": {
+        initialRotation: { x: 10, y: 300, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 600 }
+    },
+    "Jet.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 300 }
+    },
+    "Rover.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 600 }
+    }
+    ,
+    "Smartphone.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 600 }
+    }
+};
+
+// Gère le changement de modèle
+const selector = document.getElementById("modelSelector");
+
+// Écouteur d'événement pour le changement de modèle
+selector.addEventListener("change", () => {
+    const modelPath = "assets/images/" + selector.value;
+
+    if (car3D) {
+        scene.remove(car3D);
+        car3D = null;
+    }
+
+    loader.load(modelPath, gltf => {
+        car3D = gltf.scene;
+
+        // Normalisation (taille, centrage, sol)
+        normalizeModel(car3D, 200);
+
+        // Appliquer la rotation initiale spécifique
+        const config = modelConfigs[selector.value];
+        if (config && config.initialRotation) {
+            const deg = config.initialRotation;
+            car3D.rotation.set(
+                THREE.MathUtils.degToRad(deg.x),
+                THREE.MathUtils.degToRad(deg.y),
+                THREE.MathUtils.degToRad(deg.z)
+            );
+        }
+
+        scene.add(car3D);
+
+        // Ajuste la caméra si spécifié
+        if (config && config.cameraPosition) {
+            camera.position.set(
+                config.cameraPosition.x,
+                config.cameraPosition.y,
+                config.cameraPosition.z
+            );
+            camera.lookAt(0, 0, 0); // oriente la caméra vers le centre
+        }
+    });
+
+    updateCar2DImages(selector.value);
+});
+
 // Caméra
 const camera = new THREE.PerspectiveCamera(45, container3D.clientWidth / container3D.clientHeight, 0.1, 1000); // Caméra perspective (FOV, aspect ratio, near, far)
 camera.position.set(0, 50, 300); // Positionne la caméra ( x, y, z )
