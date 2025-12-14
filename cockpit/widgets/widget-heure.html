@@ -1,2 +1,25 @@
-<h2>Heure</h2>
+<h2>Horloge / Chronomètre</h2>
 <button class="fullscreen-btn">⤢</button>
+<div class="horloge_container">
+    <div class="horloge">
+
+        <!-- Boutons de bascule -->
+        <div class="boutons">
+            <button id="btnClock">Horloge</button>
+            <button id="btnChrono">Chrono</button>
+        </div>
+
+        <!-- Canvas horloge -->
+        <canvas id="clock" width="300" height="300"></canvas>
+
+        <!-- Canvas chrono (caché par défaut) -->
+        <canvas id="chrono" width="300" height="300" style="display:none"></canvas>
+
+        <!-- Boutons chrono (cachés par défaut) -->
+        <div id="chronoControls">
+            <button id="btnStart">Start</button>
+            <button id="btnStop">Stop</button>
+            <button id="btnReset">Reset</button>
+        </div>
+    </div>
+</div>
