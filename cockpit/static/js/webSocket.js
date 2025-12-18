@@ -1,57 +1,16 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
+document.addEventListener("DOMContentLoaded", () => {
     let lastAlpha = 0;
     let lastBeta = 0;
     let lastGamma = 0;
-    const SMOOTH_FACTOR = 0.05; // plus petit = plus lisse
+    const compass = new CompassRenderer();
+    const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
     // Affiche les logs dans la page
     function log(msg) {
         const pre = document.getElementById('logOutput');
-        if (!pre) {
-            console.error("pre introuvable :", canvasId);
-            return;
-        }
-
         pre.textContent += msg + "\n";      // Ajoute le message au contenu existant
         pre.scrollTop = pre.scrollHeight;   // Scroll automatique vers le bas
-    }
-
-    function smoothAlpha(alpha) {
-        let diff = alpha - lastAlpha;
-
-        // corrige les sauts > 180°
-        if (diff > 180) diff -= 360;
-        if (diff < -180) diff += 360;
-
-        // applique un lissage
-        lastAlpha += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-        return lastAlpha;
-    }
-
-    function smoothBeta(beta) {
-        let diff = beta - lastBeta;
-
-        // corrige les sauts > 180°
-        if (diff > 180) diff -= 360;
-        if (diff < -180) diff += 360;
-
-        // applique un lissage
-        lastBeta += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-        return lastBeta;
-    }
-
-    function smoothGamma(gamma) {
-        let diff = gamma - lastGamma;
-
-        // corrige les sauts > 180°
-        if (diff > 180) diff -= 360;
-        if (diff < -180) diff += 360;
-
-        // applique un lissage
-        lastGamma += diff * SMOOTH_FACTOR; // vitesse de lissage (0 = pas de mouvement, 1 = sans lissage)
-        return lastGamma;
     }
 
     // Gestion WebSocket
@@ -62,35 +21,50 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = msg.data;
 
         switch (msg.capteur) {
-            case "gps": document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); break;
+            case "gps": 
+                document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); 
+
+                window.updateMapPosition(data.latitude, data.longitude);
+                break;
             case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
             case "orientation":
                 document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
-
-                const carTop = document.getElementById("carTop");
-                const carSide = document.getElementById("carSide");
-                const carBack = document.getElementById("carBack");
 
                 const alpha = data.alpha || 0;		// rotation Z
                 const beta  = data.beta  || 0;   	// rotation X
                 const gamma = data.gamma || 0;   	// rotation Y
 
-                const smoothAlphaValue = smoothAlpha(alpha);
-                const smoothGammaValue = smoothGamma(gamma);
-                const smoothBetaValue  = smoothBeta(beta);
+                const smoothAlphaValue = jumpAlpha(alpha);
+                const smoothBetaValue  = jumpBeta(beta);
+                const smoothGammaValue = jumpGamma(gamma);
 
-                carTop.style.transform = `rotateZ(${-smoothAlphaValue}deg)`;
-                carSide.style.transform = `rotateZ(${-smoothBetaValue}deg)`;
-                carBack.style.transform = `rotateZ(${smoothGammaValue}deg)`; 
+                // --- Voiture 2D et 3D ---
+                updateCar2D(smoothAlphaValue, smoothBetaValue, smoothGammaValue);
+                updateCar3D(smoothAlphaValue, smoothBetaValue, smoothGammaValue);
 
-                updateCar3D(alpha, beta, gamma);
+
+                // --- Boussole ---
+                compass.renderHeading(
+                    smoothAlphaValue,
+                    smoothBetaValue,
+                    smoothGammaValue,
+                    "Smartphone orientation"
+                );
+
+                compass.setStatus("pret", "status-ok");
 
                 break;
 
             case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
             case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
             case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;
-            case "time": document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); break;
+            case "time": 
+                document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); 
+                
+                const [h, m, s] = data.localeTime.split(":").map(Number);
+                clock.setTime(h, m, s);
+
+                break;
             case "network": document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); break;
             default: break;
         }
@@ -109,4 +83,29 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => sendSensor(name, data), 500);
         }
     }
+
+    function jumpAlpha(alpha) {
+        let diff = alpha - lastAlpha;
+        if (diff > 180) alpha -= 360;
+        if (diff < -180) alpha += 360;
+        lastAlpha = alpha;
+        return alpha;
+    }
+
+    function jumpBeta(beta) {
+        let diff = beta - lastBeta;
+        if (diff > 180) beta -= 360;
+        if (diff < -180) beta += 360;
+        lastBeta = beta;
+        return beta;
+    }
+
+    function jumpGamma(gamma) {
+        let diff = gamma - lastGamma;
+        if (diff > 180) gamma -= 360;
+        if (diff < -180) gamma += 360;
+        lastGamma = gamma;
+        return gamma;
+    }
+
 });

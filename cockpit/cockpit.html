@@ -2,76 +2,114 @@
 <html lang="fr">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
-	<title>SmartCockpit</title>
-	<link rel="stylesheet" href="static/css/Style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Marco Dolci, Christophe Debons, Ayman Akram, Alexandre Mengotti">
+    <title>SmartCockpit</title>
+
+    <link rel="stylesheet" href="static/css/Style.css">
+
+    <!-- Importmap pour Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.152/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152/examples/jsm/"
+        }
+    }
+    </script>
+
+    <!-- Leaflet chargé UNE SEULE FOIS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 	<script src="static/js/cockpit.js"></script>
-	
-	<script type="importmap">
-	{
-		"imports": {
-		"three": "https://cdn.jsdelivr.net/npm/three@0.152/build/three.module.js",
-		"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152/examples/jsm/"
-		}
-	}
-	</script>
+
+    <!-- Fonction de chargement des widgets -->
+    <script>
+    function loadWidget(file, containerId) {
+        fetch(file)
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur de chargement : " + response.status);
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById(containerId).innerHTML = html;
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement du widget :", error);
+                document.getElementById(containerId).innerHTML = "<p>Impossible de charger le widget.</p>";
+            });
+    }
+    </script>
 </head>
 
 <body>
-	<header class="entete">
-		<div class="bannier"> <h1>SmartCockpit</h1></div>
-	</header>
-	<main>
-		<div class = "grid-container-widgets">
-			<div class="widget" id="orientationWidget3D">
-				<script>loadWidget("widgets/widget-orientation3D.html", "orientationWidget3D")</script>
-			</div>
-			<div class="widget" id="orientationWidget">
-				<script>loadWidget("widgets/widget-orientation2D.html", "orientationWidget")</script>
-			</div>
-			<div class="widget" id="localisationWidget">
-				<script>loadWidget("widgets/widget-localisation.html", "localisationWidget")</script>
-				<script src="static/js/widget-localisation.js"></script>
-			</div>
-			<div class="widget" id="boussoleWidget">
-				<script>loadWidget("widgets/widget-boussole.html", "boussoleWidget")</script>
-				<script src="static/js/widget-boussole.js"></script>
-			</div>
-			<div class="widget" id="meteoWidget">
-				<script>loadWidget("widgets/widget-meteo.html", "meteoWidget")</script>
-				<script src="static/js/widget-meteo.js"></script>
-			</div>
+
+    <!-- WebSocket doit être chargé AVANT les widgets -->
+    <script src="static/js/webSocket.js"></script>
+
+    <header class="entete">
+        <div class="bannier"><h1>SmartCockpit</h1></div>
+    </header>
+
+    <main>
+        <div class="grid-container-widgets">
+
+            <div class="widget" id="orientationWidget3D">
+                <script>loadWidget("widgets/widget-orientation3D.html", "orientationWidget3D")</script>
+                <script type="module" src="static/js/widget-orientation.js"></script>
+            </div>
+
+            <div class="widget" id="orientationWidget">
+                <script>loadWidget("widgets/widget-orientation2D.html", "orientationWidget")</script>
+            </div>
+
+            <div class="widget" id="localisationWidget">
+                <script>loadWidget("widgets/widget-localisation.html", "localisationWidget")</script>
+                <script src="static/js/widget-localisation.js"></script>
+            </div>
+
+            <div class="widget" id="boussoleWidget">
+                <script>loadWidget("widgets/widget-boussole.html", "boussoleWidget")</script>
+                <script src="static/js/widget-boussole.js"></script>
+            </div>
+
+            <div class="widget" id="meteoWidget">
+                <script>loadWidget("widgets/widget-meteo.html", "meteoWidget")</script>
+                <script src="static/js/widget-meteo.js"></script>
+            </div>
+
             <div class="widget" id="cameraWidget">
-				<script>loadWidget("widgets/widget-camera.html", "cameraWidget")</script>
-				<script src="static/js/widget-camera.js"></script>
-			</div>
-			<div class="widget" id="microWidget">
-				<script>loadWidget("widgets/widget-micro.html", "microWidget")</script>
-				<script src="static/js/widget-micro.js"></script>
-			</div>
+                <script>loadWidget("widgets/widget-camera.html", "cameraWidget")</script>
+                <script src="static/js/widget-camera.js"></script>
+            </div>
+
+            <div class="widget" id="microWidget">
+                <script>loadWidget("widgets/widget-micro.html", "microWidget")</script>
+                <script src="static/js/widget-micro.js"></script>
+            </div>
+
             <div class="widget" id="batterieWidget">
-				<script>loadWidget("widgets/widget-batterie.html", "batterieWidget")</script>
-				<script src="static/js/widget-batterie.js"></script>
-			</div>
+                <script>loadWidget("widgets/widget-batterie.html", "batterieWidget")</script>
+                <script src="static/js/widget-batterie.js"></script>
+            </div>
+
             <div class="widget" id="heureWidget">
-				<script>loadWidget("widgets/widget-heure.html", "heureWidget")</script>
-				<script src="static/js/widget-heure.js"></script>
-			</div>
+                <script>loadWidget("widgets/widget-heure.html", "heureWidget")</script>
+                <script src="static/js/widget-heure.js"></script>
+            </div>
+
             <div class="widget" id="reseauWidget">
-				<script>loadWidget("widgets/widget-reseau.html", "reseauWidget")</script>
-				<script src="static/js/widget-reseau.js"></script>
-			</div>
-		</div>
+                <script>loadWidget("widgets/widget-reseau.html", "reseauWidget")</script>
+                <script src="static/js/widget-reseau.js"></script>
+            </div>
 
-		<div class = "debug-container" id="debugWidget">
-			<script>loadWidget("widgets/widget-debug.html", "debugWidget")</script>
-		</div>
-	</main>
+        </div>
 
-	<script type="module" src="static/js/widget-orientation.js"></script>
-	<script src="static/js/webSocket.js"></script>
+        <div class="debug-container" id="debugWidget">
+            <script>loadWidget("widgets/widget-debug.html", "debugWidget")</script>
+        </div>
+    </main>
+
 </body>
-
 </html>
