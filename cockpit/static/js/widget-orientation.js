@@ -120,15 +120,18 @@ const modelConfigs = {
     ,
     "car_5.glb": {
         initialRotation: { x: 10, y: 210, z: 0 },
-        cameraPosition: { x: 0, y: 60, z: 300 }
+        cameraPosition: { x: 0, y: 60, z: 300 },
+        rotationOffset: { x: 0, y: 180, z: 0 } //offset le modèle 3D est nativement mal orienté
     },
     "Moto_2.glb": {
         initialRotation: { x: 10, y: 210, z: 0 },
-        cameraPosition: { x: 0, y: 100, z: 350 }
+        cameraPosition: { x: 0, y: 100, z: 350 },
+        rotationOffset: { x: 0, y: 180, z: 0 } //offset le modèle 3D est nativement mal orienté
     },
     "Trotinette_2.glb": {
         initialRotation: { x: 10, y: 300, z: 0 },
-        cameraPosition: { x: 0, y: 100, z: 600 }
+        cameraPosition: { x: 0, y: 100, z: 600 },
+        rotationOffset: { x: 0, y: 270, z: 0 } //offset le modèle 3D est nativement mal orienté
     },
     "Jet.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },
@@ -141,7 +144,8 @@ const modelConfigs = {
     ,
     "Smartphone.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },
-        cameraPosition: { x: 0, y: 100, z: 600 }
+        cameraPosition: { x: 0, y: 100, z: 600 },
+        rotationOffset: { x: 90, y: 180, z: 0 } //offset le modèle 3D est nativement mal orienté
     }
 };
 
@@ -216,14 +220,6 @@ let car3D;
 selector.value = "car.glb";
 selector.dispatchEvent(new Event("change"));
 
-// // Chargement du modèle 3D de la voiture
-// loader.load("assets/images/car.glb", gltf => {
-//     car3D = gltf.scene;
-//     car3D.scale.set(0.5, 0.5, 0.5); // Ajuste l'échelle du modèle
-    
-//     scene.add(car3D);
-// });
-
 // Gère le redimensionnement de la fenêtre
 window.addEventListener("resize", () => {
     camera.aspect = container3D.clientWidth / container3D.clientHeight;
@@ -248,6 +244,20 @@ function updateCar3D(alpha, beta, gamma) {
 
     const euler = new THREE.Euler(-b, a + Math.PI, -c, 'ZYX'); // Ordre des rotations
     const targetQuat = new THREE.Quaternion().setFromEuler(euler); // Crée un quaternion à partir des angles d'Euler (quaternion = indique une rotation dans l'espace 3D)
+
+    // Applique l'offset d'orientation si défini
+    const config = modelConfigs[selector.value];
+    if (config && config.rotationOffset) {
+        const offset = config.rotationOffset;
+        const offsetQuat = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+                THREE.MathUtils.degToRad(offset.x),
+                THREE.MathUtils.degToRad(offset.y),
+                THREE.MathUtils.degToRad(offset.z)
+            )
+        );
+        targetQuat.multiply(offsetQuat);
+    }
 
     car3D.quaternion.copy(targetQuat);
 }
