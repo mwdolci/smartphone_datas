@@ -212,13 +212,17 @@ scene.add(dirLight);
 const loader = new GLTFLoader();
 let car3D;
 
-// Chargement du modèle 3D de la voiture
-loader.load("assets/images/car.glb", gltf => {
-    car3D = gltf.scene;
-    car3D.scale.set(0.5, 0.5, 0.5); // Ajuste l'échelle du modèle
+// Premier choix à la création de la page
+selector.value = "car.glb";
+selector.dispatchEvent(new Event("change"));
+
+// // Chargement du modèle 3D de la voiture
+// loader.load("assets/images/car.glb", gltf => {
+//     car3D = gltf.scene;
+//     car3D.scale.set(0.5, 0.5, 0.5); // Ajuste l'échelle du modèle
     
-    scene.add(car3D);
-});
+//     scene.add(car3D);
+// });
 
 // Gère le redimensionnement de la fenêtre
 window.addEventListener("resize", () => {
