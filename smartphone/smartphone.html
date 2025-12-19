@@ -137,6 +137,9 @@
     </main>
 
     <script>
+        let peerConnection;
+        let videoStream;
+
         const ws = new WebSocket("wss://smartphone-datas.onrender.com"); // instancie la connexion WebSocket
 
         // Fonction pour afficher les logs dans la page
@@ -194,10 +197,6 @@
         });
         ws.onerror = e => log("Erreur WebSocket : " + e); // gère les erreurs de la connexion WebSocket
         ws.onclose = e => log("WebSocket fermée."); // gère la fermeture de la connexion WebSocket
-
-        // --- WebRTC ---
-        let peerConnection;
-        let videoStream;
 
         function startWebRTC() {
             navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => { // obtient le flux vidéo de la caméra
