@@ -87,7 +87,12 @@ const model2DImages = {
         top: "assets/images/rover_top.png",
         side: "assets/images/rover_side.png",
         back: "assets/images/rover_back.png"
-    },    
+    },
+    "Boat.glb": {
+        top: "assets/images/boat_top.png",
+        side: "assets/images/boat_side.png",
+        back: "assets/images/boat_back.png"
+    },  
     "Smartphone.glb": {
         top: "assets/images/smartphone_top.png",
         side: "assets/images/smartphone_side.png",
@@ -144,8 +149,11 @@ const modelConfigs = {
     "Rover.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },
         cameraPosition: { x: 0, y: 100, z: 600 }
-    }
-    ,
+    },
+    "Boat.glb": {
+        initialRotation: { x: 10, y: 30, z: 0 },
+        cameraPosition: { x: 0, y: 100, z: 500 }
+    },
     "Smartphone.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },
         cameraPosition: { x: 0, y: 100, z: 600 },
