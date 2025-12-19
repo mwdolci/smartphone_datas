@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Permet d'éviter les sauts brusques d'angles
     function jumpAlpha(alpha) {
         let diff = alpha - lastAlpha;
         if (diff > 180) alpha -= 360;
@@ -92,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return alpha;
     }
 
+    // Permet d'éviter les sauts brusques d'angles
     function jumpBeta(beta) {
         let diff = beta - lastBeta;
         if (diff > 180) beta -= 360;
@@ -100,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return beta;
     }
 
+    // Permet d'éviter les sauts brusques d'angles
     function jumpGamma(gamma) {
         let diff = gamma - lastGamma;
         if (diff > 180) gamma -= 360;
