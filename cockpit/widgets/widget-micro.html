@@ -1,2 +1,67 @@
-<h2>Micro</h2>
-<button class="fullscreen-btn">⤢</button>
+<div class="widget-header">
+    <h2>Microphone</h2>
+    <button class="fullscreen-btn" onclick="toggleFullscreen('microWidget')">⛶</button>
+</div>
+
+<div class="micro-container">
+    <!-- État de connexion -->
+    <div id="micro-status" class="micro-status">
+        <span class="status-indicator" id="micro-status-indicator">●</span>
+        <span id="micro-status-text">En attente...</span>
+    </div>
+    
+    <!-- Visualiseur de décibels -->
+    <div class="micro-visualizer">
+        <canvas id="micro-canvas" width="400" height="300"></canvas>
+    </div>
+    
+    <!-- Niveau de décibels actuel -->
+    <div class="micro-level">
+        <div class="level-display">
+            <span id="micro-db-value" class="db-value">0</span>
+            <span class="db-unit">dB</span>
+        </div>
+        <div class="level-label">Niveau sonore</div>
+    </div>
+    
+    <!-- Barre de niveau -->
+    <div class="micro-meter">
+        <div class="meter-track">
+            <div id="micro-meter-fill" class="meter-fill"></div>
+            <div class="meter-markers">
+                <span style="left: 0%">0</span>
+                <span style="left: 25%">25</span>
+                <span style="left: 50%">50</span>
+                <span style="left: 75%">75</span>
+                <span style="left: 100%">100</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistiques -->
+    <div class="micro-stats">
+        <div class="stat-item">
+            <span class="stat-label">Min</span>
+            <span id="micro-min" class="stat-value">0 dB</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Moy</span>
+            <span id="micro-avg" class="stat-value">0 dB</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Max</span>
+            <span id="micro-max" class="stat-value">0 dB</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Fréquence</span>
+            <span id="micro-freq" class="stat-value">0 Hz</span>
+        </div>
+    </div>
+    
+    <!-- Mode de visualisation -->
+    <div class="micro-mode-selector">
+        <button class="mode-btn active" data-mode="bars">Barres</button>
+        <button class="mode-btn" data-mode="wave">Onde</button>
+        <button class="mode-btn" data-mode="circle">Cercle</button>
+    </div>
+</div>

@@ -470,5 +470,241 @@ button {
 }
 
 /* ====================================
-   WIDGET MÉTÉO - STYLES
+   WIDGET MICROPHONE - STYLES
    ==================================== */
+   .micro-container {
+    padding: 10px;  /* Réduit de 15px à 10px */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;  /* Réduit de 15px à 8px */
+}
+
+/* Statut de connexion */
+.micro-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;  /* Réduit */
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 0.85rem;  /* Réduit de 0.9rem */
+}
+
+.status-indicator {
+    font-size: 0.7rem;
+    transition: color 0.3s ease;
+}
+
+#micro-status-text {
+    transition: color 0.3s ease;
+}
+
+/* Visualiseur Canvas */
+.micro-visualizer {
+    position: relative;
+    flex: 1;
+    min-height: 150px;  /* Réduit de 200px à 150px */
+    max-height: 180px;  /* Limite la hauteur max */
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#micro-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+/* Niveau de décibels actuel */
+.micro-level {
+    text-align: center;
+    padding: 8px;  /* Réduit de 15px */
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.level-display {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+}
+
+.db-value {
+    font-size: 2.5rem;  /* Réduit de 3.5rem */
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+}
+
+.db-unit {
+    font-size: 1.2rem;  /* Réduit de 1.5rem */
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 0.3rem;
+}
+
+.level-label {
+    margin-top: 5px;  /* Réduit de 8px */
+    font-size: 0.75rem;  /* Réduit de 0.85rem */
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Barre de niveau */
+.micro-meter {
+    padding: 6px 0;  /* Réduit de 10px */
+}
+
+.meter-track {
+    position: relative;
+    height: 20px;  /* Réduit de 30px */
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;  /* Réduit de 15px */
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    background: #4caf50;
+    border-radius: 10px;
+    transition: width 0.1s ease, background 0.3s ease;
+}
+
+.meter-markers {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;  /* Réduit de 5px */
+    font-size: 0.65rem;  /* Réduit de 0.7rem */
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Statistiques */
+.micro-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;  /* Réduit de 10px */
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;  /* Réduit de 5px */
+    padding: 6px;  /* Réduit de 10px */
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.65rem;  /* Réduit de 0.7rem */
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 0.85rem;  /* Réduit de 0.95rem */
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Sélecteur de mode */
+.micro-mode-selector {
+    display: flex;
+    gap: 6px;  /* Réduit de 8px */
+    justify-content: center;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 8px 12px;  /* Réduit de 10px 15px */
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;  /* Réduit de 0.85rem */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mode-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mode-btn.active {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .micro-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .db-value {
+        font-size: 2rem;
+    }
+    
+    .micro-mode-selector {
+        flex-direction: column;
+    }
+}
+
+/* Mode plein écran */
+.widget.fullscreen .micro-visualizer {
+    min-height: 400px;
+    max-height: none;
+}
+
+.widget.fullscreen .db-value {
+    font-size: 5rem;
+}
+
+.widget.fullscreen .micro-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.widget.fullscreen .stat-item {
+    padding: 20px;
+}
+
+.widget.fullscreen .stat-value {
+    font-size: 1.5rem;
+}
+
+.widget.fullscreen .micro-container {
+    gap: 15px;
+    padding: 15px;
+}
+
+/* Animation de pulsation pour le statut connecté */
+@keyframes pulse-green {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.status-indicator[style*="color: rgb(76, 175, 80)"] {
+    animation: pulse-green 2s ease-in-out infinite;
+}

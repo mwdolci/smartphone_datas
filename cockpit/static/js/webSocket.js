@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     let lastAlpha = 0;
     let lastBeta = 0;
@@ -22,18 +21,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (msg.capteur) {
             case "gps":  
-            document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);  
-            
-            // Mise à jour de la carte
-            window.updateMapPosition(data.latitude, data.longitude);
-            
-            // Mise à jour du widget météo
-            if (typeof window.updateWeather === 'function') {
-                window.updateWeather(data.latitude, data.longitude);
-            }
-            
-            break;
-            case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
+                document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);  
+                
+                // Mise à jour de la carte
+                window.updateMapPosition(data.latitude, data.longitude);
+                
+                // Mise à jour du widget météo
+                if (typeof window.updateWeather === 'function') {
+                    window.updateWeather(data.latitude, data.longitude);
+                }
+                
+                break;
+                
+            case "accelerometre": 
+                document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); 
+                break;
+                
             case "orientation":
                 document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
 
@@ -49,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateCar2D(smoothAlphaValue, smoothBetaValue, smoothGammaValue);
                 updateCar3D(smoothAlphaValue, smoothBetaValue, smoothGammaValue);
 
-
                 // --- Boussole ---
                 compass.renderHeading(
                     smoothAlphaValue,
@@ -62,9 +64,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 break;
 
-            case "battery": document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); break;
-            case "micro": document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2); break;
-            case "camera": document.getElementById('cameraVideo').title = "Streaming"; break;
+            case "battery": 
+                document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); 
+                break;
+                
+            case "micro": 
+                document.getElementById('microOutput').textContent = JSON.stringify(data, null, 2);
+                
+                // Mise à jour du widget microphone 
+                if (typeof window.updateMicrophone === 'function') {
+                    window.updateMicrophone(data);
+                }
+                
+                break;
+                
+            case "camera": 
+                document.getElementById('cameraVideo').title = "Streaming"; 
+                break;
+                
             case "time": 
                 document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); 
                 
@@ -72,8 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 clock.setTime(h, m, s);
 
                 break;
-            case "network": document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); break;
-            default: break;
+                
+            case "network": 
+                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); 
+                break;
+                
+            default: 
+                break;
         }
     };
 
