@@ -295,3 +295,180 @@ button {
 #map_geo {
     height:400px;
 }
+
+/* ====================================
+   WIDGET MÉTÉO - STYLES
+   ==================================== */
+
+   .meteo-container {
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* États: Loading, Error, Content */
+.meteo-loading,
+.meteo-error {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.meteo-error {
+    color: #ef4444;
+}
+
+.meteo-error-msg {
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
+
+/* Contenu principal */
+.meteo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Section principale */
+.meteo-main {
+    text-align: center;
+}
+
+.meteo-city h3 {
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    color: #fff;
+}
+
+.meteo-city p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+/* Température et icône */
+.meteo-temp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.temp-value {
+    display: flex;
+    align-items: flex-start;
+    font-size: 3rem;
+    font-weight: 300;
+    color: #fff;
+}
+
+.temp-unit {
+    font-size: 1.5rem;
+    margin-top: 0.3rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.meteo-icon img {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.meteo-description p {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: capitalize;
+}
+
+/* Détails météo */
+.meteo-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.meteo-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Coordonnées GPS */
+.meteo-coords {
+    text-align: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.meteo-coords small {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .temp-value {
+        font-size: 2.5rem;
+    }
+    
+    .meteo-icon img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .meteo-details {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mode plein écran */
+.widget.fullscreen .meteo-details {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.widget.fullscreen .temp-value {
+    font-size: 5rem;
+}
+
+.widget.fullscreen .meteo-icon img {
+    width: 120px;
+    height: 120px;
+}
+
+.widget.fullscreen .meteo-city h3 {
+    font-size: 2rem;
+}
+
+.widget.fullscreen .meteo-description p {
+    font-size: 1.5rem;
+}
+
+/* ====================================
+   WIDGET MÉTÉO - STYLES
+   ==================================== */

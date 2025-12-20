@@ -1,2 +1,83 @@
-<h2>Météo</h2>
-<button class="fullscreen-btn">⤢</button>
+<div class="widget-header">
+    <h2>Météo</h2>
+    <button class="fullscreen-btn" onclick="toggleFullscreen('meteoWidget')">⛶</button>
+</div>
+
+<div class="meteo-container">
+    <div id="meteo-loading" class="meteo-loading">
+        <p>En attente des données GPS...</p>
+    </div>
+    
+    <div id="meteo-error" class="meteo-error" style="display: none;">
+        <p id="meteo-error-msg">Erreur lors de la récupération des données météo</p>
+    </div>
+    
+    <div id="meteo-content" class="meteo-content" style="display: none;">
+        <div class="meteo-main">
+            <div class="meteo-city">
+                <h3 id="meteo-city-name">—</h3>
+                <p id="meteo-country">—</p>
+            </div>
+            
+            <div class="meteo-temp">
+                <div class="temp-value">
+                    <span id="meteo-temperature">—</span>
+                    <span class="temp-unit">°C</span>
+                </div>
+                <div class="meteo-icon">
+                    <img id="meteo-icon-img" src="" alt="Météo" style="display: none;">
+                </div>
+            </div>
+            
+            <div class="meteo-description">
+                <p id="meteo-desc">—</p>
+            </div>
+        </div>
+        
+        <div class="meteo-details">
+            <div class="meteo-detail-item">
+                <span class="detail-label">Ressenti</span>
+                <span class="detail-value" id="meteo-feels-like">— °C</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Humidité</span>
+                <span class="detail-value" id="meteo-humidity">— %</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Vent</span>
+                <span class="detail-value" id="meteo-wind">— km/h</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Pression</span>
+                <span class="detail-value" id="meteo-pressure">— hPa</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Visibilité</span>
+                <span class="detail-value" id="meteo-visibility">— km</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Lever du soleil</span>
+                <span class="detail-value" id="meteo-sunrise">—</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Coucher du soleil</span>
+                <span class="detail-value" id="meteo-sunset">—</span>
+            </div>
+            
+            <div class="meteo-detail-item">
+                <span class="detail-label">Dernière MAJ</span>
+                <span class="detail-value" id="meteo-update">—</span>
+            </div>
+        </div>
+        
+        <div class="meteo-coords">
+            <small id="meteo-coordinates">GPS: —, —</small>
+        </div>
+    </div>
+</div>

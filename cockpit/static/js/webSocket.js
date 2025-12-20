@@ -21,11 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = msg.data;
 
         switch (msg.capteur) {
-            case "gps": 
-                document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); 
-
-                window.updateMapPosition(data.latitude, data.longitude);
-                break;
+            case "gps":  
+            document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);  
+            
+            // Mise à jour de la carte
+            window.updateMapPosition(data.latitude, data.longitude);
+            
+            // Mise à jour du widget météo
+            if (typeof window.updateWeather === 'function') {
+                window.updateWeather(data.latitude, data.longitude);
+            }
+            
+            break;
             case "accelerometre": document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); break;
             case "orientation":
                 document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
