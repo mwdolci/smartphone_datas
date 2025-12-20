@@ -26,11 +26,10 @@
         }
 
         main {
-            
             margin: 80px 10px 30px 10px;
             width: calc(100% - 20px);
             align-content: center;
-            text-align: center ;
+            text-align: center;
         }
 
         .entete {
@@ -50,9 +49,9 @@
             left: 0px;
             width: 100%;
             height: 100%;
-            background-color:transparent;
-            background-color: rgba(0, 0, 0, 0.2); /* noir semi-transparent pour assombrir */
-            backdrop-filter: blur(30px);  /*flou */
+            background-color: transparent;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(30px);
         }
 
         pre {
@@ -63,7 +62,7 @@
             overflow-y: auto;
             width: calc(100% - 50px);
             margin-bottom: 30px;
-            text-align: left ;
+            text-align: left;
             margin-left: auto;
             margin-right: auto;
         }
@@ -71,7 +70,7 @@
         video {
             display: block;
             width: calc(100% - 50px);
-            margin-top: 10px; 
+            margin-top: 10px;
             margin-bottom: 30px;
             background: #f0f0f0;
             border-radius: 5px;
@@ -94,21 +93,17 @@
             text-decoration: none;
             width: calc(100% - 50px);
         }
-
-        /* * {
-        outline: 1px solid rgba(157, 255, 0, 0.2); 
-        } */
     </style>
 </head>
 
 <header class="entete">
-	<div class="bannier"> <h1>Smart Cockpit Sensor</h1></div>
+    <div class="bannier">
+        <h1>Smart Cockpit Sensor</h1>
+    </div>
 </header>
 
 <body>
     <main>
-        <!-- <button onclick="startAll()">Démarrer tout</button> -->
-
         <button onclick="startGPS()">GPS</button>
         <pre id="gpsOutput">En attente...</pre>
 
@@ -140,7 +135,7 @@
         let peerConnection;
         let videoStream;
 
-        const ws = new WebSocket("wss://smartphone-datas.onrender.com"); // instancie la connexion WebSocket
+        const ws = new WebSocket("wss://smartphone-datas.onrender.com");
 
         // Fonction pour afficher les logs dans la page
         function log(msg) {
@@ -162,71 +157,64 @@
         // WebSocket événements
         ws.onopen = () => {
             log("WebSocket ouverte !");
-            // test simple : message toutes les 2 secondes
             setInterval(() => sendSensor("test", { msg: "Hello cockpit !" }), 2000);
         };
 
-        // vérifier si webrtc message arrive (answer ou ice)
         ws.addEventListener("message", event => {
             log("Reçu du serveur : " + event.data);
 
             let msg;
             try {
-                msg = JSON.parse(event.data); // essaye de parser en JSON (envent.data = le message reçu)
+                msg = JSON.parse(event.data);
             } catch {
-                return; // message non json -> message normal
+                return;
             }
 
-            // Answer du cockpit -> répond à offer
             if (msg.type === "answer") {
                 if (!peerConnection) {
-                    log("Answer reçue mais peerConnection pas encore créé.");
+                    log("Answer reçu mais peerConnection pas encore créé.");
                     return;
                 }
-                peerConnection.setRemoteDescription(msg.answer); // configure la connexion WebRTC avec le cockpit en envoyant l'answer
+                peerConnection.setRemoteDescription(msg.answer);
             }
 
-            // "ICE" est le terme technique pour établir une connexion WebRTC
             if (msg.type === "ice") {
                 if (!peerConnection) {
                     log("ICE reçu mais peerConnection pas encore créé.");
                     return;
                 }
-                peerConnection.addIceCandidate(msg.candidate); // ajoute un candidat ICE pour établir la connexion WebRTC
+                peerConnection.addIceCandidate(msg.candidate);
             }
         });
-        ws.onerror = e => log("Erreur WebSocket : " + e); // gère les erreurs de la connexion WebSocket
-        ws.onclose = e => log("WebSocket fermée."); // gère la fermeture de la connexion WebSocket
+
+        ws.onerror = e => log("Erreur WebSocket : " + e);
+        ws.onclose = e => log("WebSocket fermée.");
 
         function startWebRTC() {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => { // obtient le flux vidéo de la caméra
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+                document.getElementById("cameraVideo").srcObject = stream;
+                peerConnection = new RTCPeerConnection();
 
-                document.getElementById("cameraVideo").srcObject = stream; // affiche le flux vidéo dans l'élément video
-
-                peerConnection = new RTCPeerConnection(); // crée une nouvelle connexion WebRTC
-
-                // Ajout des pistes
-                stream.getTracks().forEach(track => { 
-                    peerConnection.addTrack(track, stream); // ajoute chaque piste (vidéo/audio) à la connexion WebRTC (.addTrack permet d'ajouter une piste individuelle)
+                stream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, stream);
                 });
 
-                // ICE
-                peerConnection.onicecandidate = event => { // écoute les candidats ICE pour établir la connexion WebRTC
+                peerConnection.onicecandidate = event => {
                     if (event.candidate) {
-                        ws.send(JSON.stringify({ type: "ice", candidate: event.candidate })); // envoie le candidat ICE au serveur via WebSocket
+                        ws.send(JSON.stringify({ type: "ice", candidate: event.candidate }));
                     }
                 };
 
-                peerConnection.createOffer().then(offer => {            // crée une offre pour démarrer la connexion WebRTC
-                    peerConnection.setLocalDescription(offer);          // configure la connexion WebRTC avec l'offre créée
-                    ws.send(JSON.stringify({ type: "offer", offer }));  // envoie l'offre au serveur via WebSocket
+                peerConnection.createOffer().then(offer => {
+                    peerConnection.setLocalDescription(offer);
+                    ws.send(JSON.stringify({ type: "offer", offer }));
                 });
             });
         }
 
         // -------- Capteurs --------
         function startGPS() {
-            navigator.geolocation.watchPosition( // navigatore.geolocation.getCurrentPosition est un objet pour obtenir la position GPS
+            navigator.geolocation.watchPosition(
                 position => {
                     const data = {
                         latitude: position.coords.latitude,
@@ -234,7 +222,7 @@
                         accuracy: position.coords.accuracy,
                         timestamp: position.timestamp
                     };
-                    document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                    document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);
                     sendSensor("gps", data);
                 },
                 error => console.error("Erreur GPS :", error)
@@ -242,21 +230,20 @@
         }
 
         function startAccelerometer() {
-            window.addEventListener('devicemotion', event => { // écoute les événements de mouvement de l'appareil -- devicemotion pour l'accéléromètre
+            window.addEventListener('devicemotion', event => {
                 const data = {
                     accelerationIncludingGravity: event.accelerationIncludingGravity,
                     interval: event.interval
                 };
-                document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                document.getElementById('accelOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("accelerometre", data);
             });
         }
 
         function startOrientation() {
-            window.addEventListener('deviceorientation', event => { // écoute les événements d'orientation de l'appareil -- deviceorientation pour l'orientation
-                // Arrondit les valeurs à 2 décimales pour réduire le flux de données
+            window.addEventListener('deviceorientation', event => {
                 const alpha = Math.round(event.alpha * 100) / 100;
-                const beta  = Math.round(event.beta  * 100) / 100;
+                const beta = Math.round(event.beta * 100) / 100;
                 const gamma = Math.round(event.gamma * 100) / 100;
 
                 const data = {
@@ -265,90 +252,100 @@
                     beta,
                     gamma
                 };
-                document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("orientation", data);
             });
         }
 
         function startBattery() {
-            if (!navigator.getBattery) { alert("API batterie non supportée"); return; } // vérifie si l'API batterie est supportée
-            navigator.getBattery().then(battery => { // obtient l'objet batterie .then permet d'attendre le résultat
+            if (!navigator.getBattery) {
+                alert("API batterie non supportée");
+                return;
+            }
+            navigator.getBattery().then(battery => {
                 function updateBattery() {
                     const data = {
-                        level: battery.level * 100 + '%',
+                        level: battery.level * 100,  // ✅ CORRECTION : NUMBER au lieu de STRING
                         charging: battery.charging,
                         chargingTime: battery.chargingTime,
                         dischargingTime: battery.dischargingTime
                     };
-                    document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                    document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2);
                     sendSensor("battery", data);
                 }
-                battery.addEventListener('levelchange', updateBattery); // écoute les changements de niveau de batterie
-                battery.addEventListener('chargingchange', updateBattery); // écoute les changements d'état de charge (branché/débranché)
+                battery.addEventListener('levelchange', updateBattery);
+                battery.addEventListener('chargingchange', updateBattery);
                 updateBattery();
             });
         }
 
         function startMicro() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Microphone non supporté"); return; } // vérifie si l'API micro est supportée
-            navigator.mediaDevices.getUserMedia({ audio: true }) // obtient le flux audio du micro
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Microphone non supporté");
+                return;
+            }
+            navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();  // crée objet d'un contexte audio
-                    const source = audioContext.createMediaStreamSource(stream);                    // crée une source audio à partir du flux du micro
-                    const analyser = audioContext.createAnalyser();                                 // crée un analyseur audio
-                    source.connect(analyser);                                                       // connecte la source audio à l'analyseur
-                    analyser.fftSize = 256;                                                         // taille de la FFT pour l'analyse du son (FFT = Fast Fourier Transform)
-                    const dataArray = new Uint8Array(analyser.frequencyBinCount);                   // tableau pour stocker les données audio
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(stream);
+                    const analyser = audioContext.createAnalyser();
+                    source.connect(analyser);
+                    analyser.fftSize = 256;
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-                    // Fonction pour analyser le volume sonore
                     function updateMicro() {
-                        analyser.getByteTimeDomainData(dataArray); // remplit dataArray avec les données audio actuelles
+                        analyser.getByteTimeDomainData(dataArray);
                         let sum = 0;
-                        for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128); // calcule la somme des amplitudes (centrées autour de 128 qui est le niveau moyen)
+                        for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128);
                         const volume = sum / dataArray.length;
                         const data = { volume };
-                        document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2); // affiche le volume arrondi à 2 décimales
+                        document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2);
                         sendSensor("micro", data);
-                        requestAnimationFrame(updateMicro); // appelle updateMicro à chaque frame pour une mise à jour continue
+                        requestAnimationFrame(updateMicro);
                     }
                     updateMicro();
                 })
-                .catch(err => document.getElementById('microOutput').textContent = "Erreur micro : " + err.message); // gère les erreurs d'accès au micro
+                .catch(err => document.getElementById('microOutput').textContent = "Erreur micro : " + err.message);
         }
 
         function startCamera() {
-            startWebRTC(); // démarre la connexion WebRTC pour la caméra
+            startWebRTC();
         }
 
         function startTime() {
             function updateTime() {
                 const now = new Date();
-                const data = { localeTime: now.toLocaleTimeString(), fullDate: now.toLocaleString() }; // crée un objet avec l'heure locale et la date complète
-                document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                const data = {
+                    localeTime: now.toLocaleTimeString(),
+                    fullDate: now.toLocaleString()
+                };
+                document.getElementById('timeOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("time", data);
             }
-            updateTime(); 
-            setInterval(updateTime, 1000); // met à jour l'heure toutes les secondes
+            updateTime();
+            setInterval(updateTime, 1000);
         }
 
         function startNetwork() {
-            if (!navigator.connection) { alert("API réseau non supportée"); return; } // vérifie si l'API réseau est supportée
+            if (!navigator.connection) {
+                alert("API réseau non supportée");
+                return;
+            }
             function updateNetwork() {
-                const conn = navigator.connection; // obtient l'objet de connexion réseau
+                const conn = navigator.connection;
                 const data = {
                     effectiveType: conn.effectiveType,
-                    downlink: conn.downlink + " Mbps",      // vitesse de téléchargement en Mbps
-                    rtt: conn.rtt + " ms",                  // rtt = round-trip time en ms -> permet de mesurer la latence
-                    saveData: conn.saveData                 // indique si le mode économie de données est activé
+                    downlink: conn.downlink + " Mbps",
+                    rtt: conn.rtt + " ms",
+                    saveData: conn.saveData
                 };
-                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); // JSON.stringify pour formater l'objet en JSON lisible (data= l'objet, null=pas de filtre, 2=indentation)
+                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
                 sendSensor("network", data);
             }
-            navigator.connection.addEventListener('change', updateNetwork); // écoute les changements dans la connexion réseau
+            navigator.connection.addEventListener('change', updateNetwork);
             updateNetwork();
         }
 
-        // Démarrer tous les capteurs (à éviter si pas besoin de tout car ralentit le thread)
         function startAll() {
             startGPS();
             startAccelerometer();
@@ -359,7 +356,6 @@
             startTime();
             startNetwork();
         }
-
     </script>
 </body>
 

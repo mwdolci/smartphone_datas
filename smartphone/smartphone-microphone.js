@@ -1,14 +1,3 @@
-/**
- * SMARTPHONE - Capture et envoi des données audio
- * 
- * Ce code capture le niveau audio du microphone et l'envoie via WebSocket
- * 
- * OPTION 1: Ajouter ce code dans smartphone/smartphone.html (entre <script> tags)
- * OPTION 2: Créer un fichier smartphone/microphone.js et l'importer
- * OPTION 3: Ajouter directement dans la console du smartphone pour tester
- */
-
-// Configuration
 const AUDIO_CONFIG = {
     // Intervalle d'envoi des données (ms)
     sendInterval: 100, // 10 fois par seconde
@@ -195,32 +184,3 @@ function stopMicrophone() {
     
     console.log('[Micro] Capture audio arrêtée');
 }
-
-// ==================================================================
-// INTÉGRATION DANS SMARTPHONE.HTML
-// ==================================================================
-// 
-// MÉTHODE 1: Bouton manuel
-// Ajoutez ce HTML dans smartphone.html:
-// 
-// <button id="startMicroBtn" onclick="initMicrophone()">
-//     Démarrer le microphone
-// </button>
-// 
-// MÉTHODE 2: Démarrage automatique
-// Ajoutez ceci dans l'événement DOMContentLoaded existant:
-// 
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Attendre que WebSocket soit connecté
-//     setTimeout(() => {
-//         if (ws && ws.readyState === WebSocket.OPEN) {
-//             initMicrophone();
-//         }
-//     }, 1000);
-// });
-// 
-// MÉTHODE 3: Intégration avec les autres capteurs
-// Si vous avez déjà un système de boutons pour activer les capteurs,
-// ajoutez un bouton "Micro" qui appelle initMicrophone()
-// 
-// ==================================================================

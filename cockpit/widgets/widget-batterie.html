@@ -1,2 +1,89 @@
-<h2>Batterie</h2>
-<button class="fullscreen-btn">⤢</button>
+<div class="widget-header">
+    <h2>Batterie</h2>
+    <button class="fullscreen-btn" onclick="toggleFullscreen('batterieWidget')">⛶</button>
+</div>
+
+<div class="battery-container">
+    <!-- Statut de connexion -->
+    <div id="battery-status" class="battery-status">
+        <span class="status-indicator" id="battery-status-indicator">●</span>
+        <span id="battery-status-text">En attente...</span>
+    </div>
+    
+    <!-- Visualisation de la batterie -->
+    <div class="battery-visual">
+        <div class="battery-body">
+            <div class="battery-tip"></div>
+            <div class="battery-shell">
+                <div id="battery-fill" class="battery-fill" style="width: 0%"></div>
+                <div class="battery-percentage">
+                    <span id="battery-percent-value">0</span>%
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Niveau en grand -->
+    <div class="battery-level">
+        <div class="level-display">
+            <span id="battery-level-value" class="level-value">0</span>
+            <span class="level-unit">%</span>
+        </div>
+        <div class="level-label" id="battery-charging-label">Décharge</div>
+    </div>
+    
+    <!-- Détails de la batterie -->
+    <div class="battery-details">
+        <div class="detail-item">
+            <span class="detail-icon">🔌</span>
+            <div class="detail-info">
+                <span class="detail-label">État</span>
+                <span id="battery-state" class="detail-value">—</span>
+            </div>
+        </div>
+        
+        <div class="detail-item">
+            <span class="detail-icon">⏱️</span>
+            <div class="detail-info">
+                <span class="detail-label">Temps restant</span>
+                <span id="battery-time" class="detail-value">—</span>
+            </div>
+        </div>
+        
+        <div class="detail-item">
+            <span class="detail-icon">🔋</span>
+            <div class="detail-info">
+                <span class="detail-label">Santé</span>
+                <span id="battery-health" class="detail-value">—</span>
+            </div>
+        </div>
+        
+        <div class="detail-item">
+            <span class="detail-icon">📊</span>
+            <div class="detail-info">
+                <span class="detail-label">Technologie</span>
+                <span id="battery-tech" class="detail-value">—</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistiques supplémentaires -->
+    <div class="battery-stats">
+        <div class="stat-item">
+            <span class="stat-label">Température</span>
+            <span id="battery-temp" class="stat-value">— °C</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Voltage</span>
+            <span id="battery-voltage" class="stat-value">— V</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Courant</span>
+            <span id="battery-current" class="stat-value">— mA</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Capacité</span>
+            <span id="battery-capacity" class="stat-value">— mAh</span>
+        </div>
+    </div>
+</div>

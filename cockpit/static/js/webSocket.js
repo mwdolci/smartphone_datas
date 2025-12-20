@@ -65,7 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
 
             case "battery": 
-                document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2); 
+                document.getElementById('batteryOutput').textContent = JSON.stringify(data, null, 2);
+                
+                if (typeof window.updateBattery === 'function') {
+                    window.updateBattery(data);
+                }
+                
                 break;
                 
             case "micro": 
