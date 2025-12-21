@@ -327,24 +327,24 @@
         }
 
         function startNetwork() {
-            if (!navigator.connection) {
-                alert("API réseau non supportée");
-                return;
-            }
-            function updateNetwork() {
-                const conn = navigator.connection;
-                const data = {
-                    effectiveType: conn.effectiveType,
-                    downlink: conn.downlink + " Mbps",
-                    rtt: conn.rtt + " ms",
-                    saveData: conn.saveData
-                };
-                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
-                sendSensor("network", data);
-            }
-            navigator.connection.addEventListener('change', updateNetwork);
-            updateNetwork();
-        }
+    if (!navigator.connection) {
+        alert("API réseau non supportée");
+        return;
+    }
+    function updateNetwork() {
+        const conn = navigator.connection;
+        const data = {
+            effectiveType: conn.effectiveType,
+            downlink: conn.downlink,        
+            rtt: conn.rtt,                  
+            saveData: conn.saveData
+        };
+        document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
+        sendSensor("network", data);
+    }
+    navigator.connection.addEventListener('change', updateNetwork);
+    updateNetwork();
+}
 
         function startAll() {
             startGPS();

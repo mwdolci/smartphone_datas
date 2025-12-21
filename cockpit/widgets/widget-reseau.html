@@ -1,2 +1,75 @@
-<h2>Réseau</h2>
-<button class="fullscreen-btn">⤢</button>
+<div class="widget-header">
+    <h2>Réseau</h2>
+    <button class="fullscreen-btn" onclick="toggleFullscreen('reseauWidget')">⛶</button>
+</div>
+
+<div class="network-container">
+    <!-- Statut de connexion -->
+    <div id="network-status" class="network-status">
+        <span class="status-indicator" id="network-status-indicator">●</span>
+        <span id="network-status-text">En attente...</span>
+    </div>
+    
+    <!-- Type de connexion -->
+    <div class="network-type">
+        <div class="type-icon" id="network-icon">📡</div>
+        <div class="type-info">
+            <div class="type-name" id="network-type-name">—</div>
+            <div class="type-label">Type de connexion</div>
+        </div>
+    </div>
+    
+    <!-- Qualité de connexion -->
+    <div class="network-quality">
+        <div class="quality-bars">
+            <div class="bar" id="bar1"></div>
+            <div class="bar" id="bar2"></div>
+            <div class="bar" id="bar3"></div>
+            <div class="bar" id="bar4"></div>
+            <div class="bar" id="bar5"></div>
+        </div>
+        <div class="quality-label" id="network-quality-label">Excellente</div>
+    </div>
+    
+    <!-- Statistiques principales -->
+    <div class="network-main-stats">
+        <div class="main-stat">
+            <div class="stat-icon">⬇️</div>
+            <div class="stat-info">
+                <span id="network-downlink" class="stat-big">—</span>
+                <span class="stat-unit">Mbps</span>
+            </div>
+            <div class="stat-label">Téléchargement</div>
+        </div>
+        
+        <div class="main-stat">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-info">
+                <span id="network-rtt" class="stat-big">—</span>
+                <span class="stat-unit">ms</span>
+            </div>
+            <div class="stat-label">Latence (RTT)</div>
+        </div>
+    </div>
+    
+    <!-- Détails supplémentaires -->
+    <div class="network-details">
+        <div class="detail-row">
+            <span class="detail-label">💾 Économie données</span>
+            <span id="network-savedata" class="detail-value">—</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">📶 Qualité signal</span>
+            <span id="network-signal-quality" class="detail-value">—</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">🔄 Dernière MAJ</span>
+            <span id="network-last-update" class="detail-value">—</span>
+        </div>
+    </div>
+    
+    <!-- Graphique historique simple -->
+    <div class="network-graph">
+        <canvas id="network-canvas" width="300" height="80"></canvas>
+    </div>
+</div>

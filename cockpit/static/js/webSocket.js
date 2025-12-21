@@ -96,7 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
                 
             case "network": 
-                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2); 
+                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
+                
+                if (typeof window.updateNetwork === 'function') {
+                    window.updateNetwork(data);
+                }
+                
                 break;
                 
             default: 

@@ -945,3 +945,224 @@ button {
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
 }
+
+/* ====================================
+   WIDGET RÉSEAU - STYLES
+   ==================================== */
+
+   .network-container {
+    padding: 6px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Statut */
+.network-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 0.7rem;
+}
+
+/* Type de connexion */
+.network-type {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.type-icon {
+    font-size: 2rem;
+}
+
+.type-info {
+    flex: 1;
+}
+
+.type-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.type-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 2px;
+}
+
+/* Qualité de connexion */
+.network-quality {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.quality-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 30px;
+}
+
+.bar {
+    width: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.bar:nth-child(1) { height: 20%; }
+.bar:nth-child(2) { height: 40%; }
+.bar:nth-child(3) { height: 60%; }
+.bar:nth-child(4) { height: 80%; }
+.bar:nth-child(5) { height: 100%; }
+
+.bar.active {
+    opacity: 1;
+}
+
+.quality-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Stats principales */
+.network-main-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.main-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+}
+
+.stat-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.stat-big {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+}
+
+.stat-unit {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+}
+
+/* Détails */
+.network-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.detail-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-value {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Graphique */
+.network-graph {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+}
+
+#network-canvas {
+    width: 100%;
+    max-width: 280px;
+    height: 60px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .network-main-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mode plein écran */
+.widget.fullscreen .network-container {
+    gap: 15px;
+    padding: 15px;
+}
+
+.widget.fullscreen .type-icon {
+    font-size: 4rem;
+}
+
+.widget.fullscreen .type-name {
+    font-size: 2rem;
+}
+
+.widget.fullscreen .stat-big {
+    font-size: 3rem;
+}
+
+.widget.fullscreen .quality-bars {
+    height: 60px;
+}
+
+.widget.fullscreen .network-graph {
+    padding: 20px;
+}
+
+.widget.fullscreen #network-canvas {
+    height: 120px;
+    max-width: 400px;
+}
