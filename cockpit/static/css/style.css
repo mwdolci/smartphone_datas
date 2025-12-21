@@ -1166,3 +1166,127 @@ button {
     height: 120px;
     max-width: 400px;
 }
+
+/* ====================================
+   WIDGET CAMÉRA - STYLES
+   ==================================== */
+
+   .camera-container {
+    padding: 8px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Statut */
+.camera-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+/* Wrapper vidéo */
+.camera-video-wrapper {
+    position: relative;
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+}
+
+#cameraStream {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Overlay quand pas de flux */
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+}
+
+.camera-icon {
+    font-size: 4rem;
+    opacity: 0.5;
+}
+
+.camera-message {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* Informations */
+.camera-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.info-value {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .camera-video-wrapper {
+        min-height: 200px;
+    }
+}
+
+/* Mode plein écran */
+.widget.fullscreen .camera-container {
+    gap: 15px;
+    padding: 15px;
+}
+
+.widget.fullscreen .camera-video-wrapper {
+    min-height: 600px;
+}
+
+.widget.fullscreen .camera-icon {
+    font-size: 6rem;
+}
+
+.widget.fullscreen .camera-message {
+    font-size: 1.2rem;
+}

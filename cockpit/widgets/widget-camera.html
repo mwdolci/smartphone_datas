@@ -1,3 +1,33 @@
-<h2>Caméra</h2>
-<button class="fullscreen-btn">⤢</button>
-<video id="remoteVideo" autoplay playsinline muted></video>
+<div class="widget-header">
+    <h2>Caméra</h2>
+    <button class="fullscreen-btn" onclick="toggleFullscreen('cameraWidget')">⛶</button>
+</div>
+
+<div class="camera-container">
+    <!-- Statut de connexion -->
+    <div id="camera-status" class="camera-status">
+        <span class="status-indicator" id="camera-status-indicator">●</span>
+        <span id="camera-status-text">En attente...</span>
+    </div>
+    
+    <!-- Flux vidéo -->
+    <div class="camera-video-wrapper">
+        <video id="cameraStream" autoplay playsinline muted></video>
+        <div class="camera-overlay" id="camera-overlay">
+            <div class="camera-icon">📷</div>
+            <div class="camera-message">Cliquez sur "Caméra" sur le smartphone</div>
+        </div>
+    </div>
+    
+    <!-- Informations -->
+    <div class="camera-info">
+        <div class="info-item">
+            <span class="info-label">📊 Qualité</span>
+            <span id="camera-quality" class="info-value">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">⚡ État</span>
+            <span id="camera-state" class="info-value">Inactif</span>
+        </div>
+    </div>
+</div>

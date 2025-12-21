@@ -19,6 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
         log("Reçu : " + JSON.stringify(msg));
         const data = msg.data;
 
+        if (msg.type === "offer") {
+            console.log('[WebSocket] Offre WebRTC reçue');
+            if (typeof window.handleCameraOffer === 'function') {
+                window.handleCameraOffer(msg.offer, ws);
+            }
+            return; // Arrêter le traitement, ne pas aller dans le switch
+        }
+    
+        if (msg.type === "ice") {
+            console.log('[WebSocket] Candidat ICE reçu');
+            if (typeof window.handleCameraIce === 'function') {
+                window.handleCameraIce(msg.candidate);
+            }
+            return; // Arrêter le traitement, ne pas aller dans le switch
+        }
+
         switch (msg.capteur) {
             case "gps":  
                 document.getElementById('gpsOutput').textContent = JSON.stringify(data, null, 2);  
