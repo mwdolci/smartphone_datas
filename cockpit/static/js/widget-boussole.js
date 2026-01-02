@@ -8,27 +8,49 @@ class CompassRenderer {
 
         this.declinaisonDeg = 0;
         this.headingOffset = 0;
+
+        // 🔥 Nouveau : heading filtré
+        this.prevHeading = null;
+        this.filterStrength = 0.15; // LPF (0.05 = très lent, 0.3 = rapide)
     }
 
     clampDeg(d) {
         return (d % 360 + 360) % 360;
     }
 
+    // 🔥 Fonction anti-saut : interpolation shortest-path
+    smoothAngle(prev, next) {
+        let delta = next - prev;
+
+        // Ramène delta dans [-180, +180]
+        delta = ((delta + 180) % 360 + 360) % 360 - 180;
+
+        return prev + delta * this.filterStrength;
+    }
+
     renderHeading(smoothAlphaValue, smoothBetaValue, smoothGammaValue, source = '') {
 
-        // ✅ Appel correct de la méthode interne
         const heading = this.computeHeadingFromEuler(
             smoothAlphaValue,
             smoothBetaValue,
             smoothGammaValue
         );
 
+        const rawHdg = this.clampDeg(heading + this.declinaisonDeg + this.headingOffset);
+
+        // 🔥 Initialisation du filtre
+        if (this.prevHeading === null) {
+            this.prevHeading = rawHdg;
+        }
+
+        // 🔥 Anti-saut + LPF
+        const filteredHdg = this.smoothAngle(this.prevHeading, rawHdg);
+        this.prevHeading = filteredHdg;
+
         const tiltText = `β=${smoothBetaValue.toFixed(0)}°, γ=${smoothGammaValue.toFixed(0)}°`;
 
-        const hdg = this.clampDeg(heading + this.declinaisonDeg + this.headingOffset);
-
-        this.needle.style.transform = `translate(-50%,-90%) rotate(${hdg}deg)`;
-        this.headingEl.textContent = hdg.toFixed(0);
+        this.needle.style.transform = `translate(-50%,-90%) rotate(${filteredHdg}deg)`;
+        this.headingEl.textContent = filteredHdg.toFixed(0);
         this.tiltEl.textContent = tiltText || '—';
         this.sourceEl.textContent = source;
     }
@@ -56,5 +78,4 @@ class CompassRenderer {
     }
 }
 
-// ✅ Expose la classe pour les autres widgets
 window.CompassRenderer = CompassRenderer;

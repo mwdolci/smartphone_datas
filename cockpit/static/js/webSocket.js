@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // --- Boussole ---
                 compass.renderHeading(
-                    smoothAlphaValue,
-                    smoothBetaValue,
-                    smoothGammaValue,
+                    alpha,
+                    beta,
+                    gamma,
                     "Smartphone orientation"
                 );
 

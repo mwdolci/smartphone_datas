@@ -1290,3 +1290,8 @@ button {
 .widget.fullscreen .camera-message {
     font-size: 1.2rem;
 }
+
+
+#map_geo{
+    z-index: 10;
+}
