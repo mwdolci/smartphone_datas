@@ -1,3 +1,10 @@
+/**
+ * Configuration du module microphone.
+ *
+ * Architecture cockpit‑driven :
+ *   → Ce module ne gère que la capture, l’analyse et l’envoi des données audio.
+ *   → Aucune logique UI ici : uniquement du traitement Web Audio API.
+ */
 const AUDIO_CONFIG = {
     // Intervalle d'envoi des données (ms)
     sendInterval: 100, // 10 fois par seconde
@@ -7,7 +14,7 @@ const AUDIO_CONFIG = {
     smoothingTimeConstant: 0.8
 };
 
-// Variables globales
+// Variables globales internes au module
 let audioContext = null;
 let analyser = null;
 let microphone = null;
@@ -15,7 +22,17 @@ let dataArray = null;
 let sendTimer = null;
 
 /**
- * Initialise la capture audio
+ * Initialise la capture audio du microphone.
+ *
+ * Étapes :
+ *   1. Demande d’accès au microphone (getUserMedia)
+ *   2. Création du contexte audio
+ *   3. Création d’un analyseur FFT
+ *   4. Connexion du flux micro → analyseur
+ *   5. Allocation du buffer de données
+ *   6. Démarrage de l’envoi périodique des données
+ *
+ * @returns {Promise<boolean>} true si initialisation réussie, false sinon
  */
 async function initMicrophone() {
     try {
@@ -35,7 +52,7 @@ async function initMicrophone() {
         // Création du contexte audio
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Création de l'analyseur
+        // Création de l'analyseur FFT
         analyser = audioContext.createAnalyser();
         analyser.fftSize = AUDIO_CONFIG.fftSize;
         analyser.smoothingTimeConstant = AUDIO_CONFIG.smoothingTimeConstant;
@@ -44,20 +61,21 @@ async function initMicrophone() {
         microphone = audioContext.createMediaStreamSource(stream);
         microphone.connect(analyser);
         
-        // Tableau pour stocker les données
+        // Allocation du buffer pour les données FFT
         const bufferLength = analyser.frequencyBinCount;
         dataArray = new Uint8Array(bufferLength);
         
         console.log('[Micro] Analyseur audio initialisé');
         
-        // Démarrage de l'envoi des données
+        // Démarrage de l'envoi périodique
         startSendingAudioData();
         
         return true;
+
     } catch (error) {
         console.error('[Micro] Erreur d\'initialisation:', error);
         
-        // Affichage d'un message d'erreur à l'utilisateur
+        // Messages utilisateur selon le type d’erreur
         if (error.name === 'NotAllowedError') {
             alert('Veuillez autoriser l\'accès au microphone dans les paramètres de votre navigateur.');
         } else if (error.name === 'NotFoundError') {
@@ -71,40 +89,52 @@ async function initMicrophone() {
 }
 
 /**
- * Calcule le niveau sonore en décibels
+ * Calcule un niveau sonore approximatif en décibels.
+ *
+ * Méthode :
+ *   - Récupère les amplitudes FFT (0–255)
+ *   - Calcule la moyenne
+ *   - Convertit en une échelle 0–100 dB (approximation visuelle)
+ *
+ * @returns {number} Niveau sonore estimé en dB
  */
 function calculateDecibels() {
     if (!analyser || !dataArray) return 0;
     
-    // Récupération des données de fréquence
     analyser.getByteFrequencyData(dataArray);
     
-    // Calcul de la moyenne
+    // Moyenne des amplitudes
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
         sum += dataArray[i];
     }
     const average = sum / dataArray.length;
     
-    // Conversion en décibels (approximation)
-    // 0-255 → 0-100 dB (simplifié pour la visualisation)
+    // Conversion simplifiée en dB
     const decibels = (average / 255) * 100;
     
     return Math.round(decibels);
 }
 
 /**
- * Calcule la fréquence dominante
+ * Calcule la fréquence dominante du signal audio.
+ *
+ * Méthode :
+ *   - Analyse FFT
+ *   - Recherche du bin avec amplitude maximale
+ *   - Conversion index → fréquence en Hz
+ *
+ * @returns {number} Fréquence dominante estimée en Hz
  */
 function calculateDominantFrequency() {
     if (!analyser || !dataArray) return 0;
     
     analyser.getByteFrequencyData(dataArray);
     
-    // Trouve l'index de la fréquence avec l'amplitude maximale
     let maxValue = 0;
     let maxIndex = 0;
     
+    // Recherche du pic d’amplitude
     for (let i = 0; i < dataArray.length; i++) {
         if (dataArray[i] > maxValue) {
             maxValue = dataArray[i];
@@ -112,8 +142,7 @@ function calculateDominantFrequency() {
         }
     }
     
-    // Conversion de l'index en fréquence (Hz)
-    // Formule: freq = (index * sampleRate) / fftSize
+    // Conversion index → fréquence
     const nyquist = audioContext.sampleRate / 2;
     const frequency = (maxIndex * nyquist) / dataArray.length;
     
@@ -121,7 +150,14 @@ function calculateDominantFrequency() {
 }
 
 /**
- * Démarre l'envoi périodique des données audio
+ * Démarre l’envoi périodique des données audio via WebSocket.
+ *
+ * Données envoyées :
+ *   - decibels : niveau sonore estimé
+ *   - frequency : fréquence dominante
+ *   - timestamp : horodatage
+ *
+ * Envoi toutes les AUDIO_CONFIG.sendInterval ms.
  */
 function startSendingAudioData() {
     if (sendTimer) {
@@ -145,7 +181,6 @@ function startSendingAudioData() {
             timestamp: Date.now()
         };
         
-        // Envoi via WebSocket
         const message = {
             capteur: 'micro',
             data: data
@@ -153,7 +188,7 @@ function startSendingAudioData() {
         
         ws.send(JSON.stringify(message));
         
-        // Log occasionnel (1 fois sur 10)
+        // Log occasionnel
         if (Math.random() < 0.1) {
             console.log(`[Micro] Envoi: ${decibels} dB, ${frequency} Hz`);
         }
@@ -164,7 +199,12 @@ function startSendingAudioData() {
 }
 
 /**
- * Arrête la capture audio
+ * Arrête proprement la capture audio et libère les ressources.
+ *
+ * Étapes :
+ *   - Arrêt du timer d’envoi
+ *   - Déconnexion du microphone
+ *   - Fermeture du contexte audio
  */
 function stopMicrophone() {
     if (sendTimer) {
