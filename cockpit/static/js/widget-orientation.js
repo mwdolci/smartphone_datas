@@ -125,7 +125,8 @@ function updateCar2DImages(modelName) {
 const modelConfigs = {
     "car.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },  // en degrés
-        cameraPosition: { x: 0, y: 50, z: 300 }
+        cameraPosition: { x: 0, y: 50, z: 300 },
+        rotationOffset: { x: 0, y: -2, z: 0 } //offset le modèle 3D est nativement mal orienté
     },
     "car_3.glb": {
         initialRotation: { x: 10, y: 30, z: 0 },
