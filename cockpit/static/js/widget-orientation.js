@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 let lastUpdate2D = 0;
+let alphaZero = null;
 const interval2D = 100; // ms, limite la fréquence pour la 2D
 
 // Met à jour l'orientation de la voiture 2D
@@ -10,11 +11,15 @@ function updateCar2D(alpha, beta, gamma) {
     if (now - lastUpdate2D < interval2D) return; // ignore si trop rapide -> evite saccades
     lastUpdate2D = now;
 
+    // Capture l’orientation de départ (une seule fois)
+    if (alphaZero === null) alphaZero = alpha;
+    const a = alpha - alphaZero;
+
     const carTop = document.getElementById("carTop");
     const carSide = document.getElementById("carSide");
     const carBack = document.getElementById("carBack");
 
-    carTop.style.transform  = `rotateZ(${-alpha}deg)`;
+    carTop.style.transform  = `rotateZ(${-a}deg)`;
     carSide.style.transform = `rotateZ(${-beta}deg)`;
     carBack.style.transform = `rotateZ(${gamma}deg)`; 
 }
@@ -168,6 +173,8 @@ const selector = document.getElementById("modelSelector");
 selector.addEventListener("change", () => {
     const modelPath = "assets/images/" + selector.value; // Chemin du modèle 3D sélectionné
 
+    alphaZero = null; // Réinitialise l'orientation de départ pour le nouveau modèle
+
     // Supprime l'ancien modèle 3D de la scène
     if (car3D) {
         scene.remove(car3D);
@@ -252,8 +259,11 @@ animate3D();
 function updateCar3D(alpha, beta, gamma) {
     if (!car3D) return; // Si le modèle 3D n'est pas encore chargé, quitte la fonction
 
+    //Capture l’orientation de départ (une seule fois)
+    if (alphaZero === null) alphaZero = alpha;
+
     // Convertit les angles de degrés à radians
-    const a = THREE.MathUtils.degToRad(alpha);
+    const a = THREE.MathUtils.degToRad(alpha - alphaZero);
     const b = THREE.MathUtils.degToRad(beta);
     const c = THREE.MathUtils.degToRad(gamma);
 
