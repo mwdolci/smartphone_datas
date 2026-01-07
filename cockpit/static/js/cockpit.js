@@ -1,7 +1,7 @@
 /**
  * Charge un fichier HTML et l'insère dans un conteneur donné.
  *
- * Fonction:
+ * Fonction :
  *   → aucune logique métier ici
  *   → uniquement un loader générique pour widgets HTML externes
  *
@@ -32,7 +32,7 @@ function loadWidget(file, containerId) {
 /**
  * Affiche ou masque la section debug.
  *
- * Fonction:
+ * Fonction :
  *   → toggle simple basé sur une classe CSS
  *   → met aussi à jour la flèche d’indication (► / ▼)
  */
@@ -61,7 +61,7 @@ function toggleDebug() {
  *   - basculer le widget associé en mode plein écran
  *   - bloquer/débloquer le scroll de la page
  *
- * Architecture:
+ * Architecture :
  *   → un seul listener global
  *   → détection via delegation (matches)
  */

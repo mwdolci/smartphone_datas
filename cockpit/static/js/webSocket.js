@@ -1,7 +1,7 @@
 /**
  * Gestion centrale des capteurs envoyés par le smartphone via WebSocket.
  *
- * Architecture cockpit‑driven :
+ * Architecture :
  *   - Ce fichier ne contient aucune logique métier : uniquement du dispatch.
  *   - Chaque capteur met à jour son widget dédié (carte, météo, boussole, etc.).
  *   - Les fonctions externes (updateCar2D, updateWeather, updateBattery, etc.)
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let lastBeta = 0;
     let lastGamma = 0;
 
-    // Boussole cockpit-friendly
+    // Boussole
     const compass = new CompassRenderer();
 
     // Connexion WebSocket au backend
