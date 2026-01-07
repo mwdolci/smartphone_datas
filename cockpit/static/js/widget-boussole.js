@@ -5,12 +5,12 @@
  * (alpha, beta, gamma). Applique :
  *   - une correction de déclinaison magnétique
  *   - un offset manuel
- *   - un filtrage LPF pour lisser le heading
+ *   - un filtrage LPF pour lisser le cap
  *   - une interpolation shortest‑path pour éviter les sauts à ±180°
  *
  * Le renderer met à jour :
  *   - l’aiguille (rotation CSS)
- *   - l’affichage du heading filtré
+ *   - l’affichage du cap filtré
  *   - l’affichage de la source et du tilt
  *
  * Architecture :
@@ -26,11 +26,11 @@ class CompassRenderer {
         this.tiltEl = document.getElementById('tilt');
         this.statusEl = document.getElementById('status');
 
-        // Corrections appliquées au heading brut
+        // Corrections appliquées au cap brut
         this.declinaisonDeg = 0; // Correction magnétique
         this.headingOffset = 0;  // Offset manuel cockpit
 
-        // Filtrage du heading
+        // Filtrage du cap
         this.prevHeading = null;     // Dernière valeur filtrée
         this.filterStrength = 0.15;  // LPF (0.05 = lent, 0.3 = rapide)
     }
@@ -62,7 +62,7 @@ class CompassRenderer {
     /**
      * Met à jour le compas à partir des angles filtrés (alpha, beta, gamma).
      * Applique :
-     *   - calcul du heading via matrice Euler
+     *   - calcul du cap via matrice Euler
      *   - correction déclinaison + offset
      *   - interpolation anti‑saut
      *   - filtrage LPF
@@ -70,14 +70,14 @@ class CompassRenderer {
      */
     renderHeading(smoothAlphaValue, smoothBetaValue, smoothGammaValue, source = '') {
 
-        // Heading brut issu des angles d’Euler
+        // Cap brut issu des angles d’Euler
         const heading = this.computeHeadingFromEuler(
             smoothAlphaValue,
             smoothBetaValue,
             smoothGammaValue
         );
 
-        // Heading corrigé
+        // Cap corrigé
         const rawHdg = this.clampDeg(heading + this.declinaisonDeg + this.headingOffset);
 
         // Initialisation du filtre
@@ -108,10 +108,10 @@ class CompassRenderer {
     }
 
     /**
-     * Calcule le heading à partir des angles d’Euler (alpha, beta, gamma).
+     * Calcule le Cap à partir des angles d’Euler (alpha, beta, gamma).
      * Utilise la matrice de rotation standard Z-X'-Y''.
      *
-     * Retourne un heading en degrés dans [-180, +180].
+     * Retourne un Cap en degrés dans [-180, +180].
      */
     computeHeadingFromEuler(alpha, beta, gamma) {
         const toRad = d => d * Math.PI / 180;
@@ -128,7 +128,7 @@ class CompassRenderer {
         const m11 = cA * cG - sA * sB * sG;
         const m12 = -cB * sA;
 
-        // Heading = atan2(m12, m11)
+        // cap = atan2(m12, m11)
         return Math.atan2(m12, m11) * 180 / Math.PI;
     }
 }
