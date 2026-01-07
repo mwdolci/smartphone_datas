@@ -46,7 +46,7 @@ function toggleDebug() {
         return;
     }
 
-    // Toggle de la visibilité
+    // Bouton pour la visibilité
     content.classList.toggle('hidden');
 
     // Mise à jour de la flèche
