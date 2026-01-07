@@ -1,17 +1,39 @@
 <h2>Boussole</h2>
+
+<!-- Bouton permettant d'activer le mode plein écran -->
 <button class="fullscreen-btn">⤢</button>
 
+<!-- Carte contenant toute l’interface de la boussole -->
 <div class="card">
+
+    <!-- Conteneur principal de la boussole graphique -->
     <div class="compass-wrap">
-        <div class="dial"><div class="north">N</div></div>
+        <div class="dial">
+            <div class="north">N</div>
+        </div>
         <div class="needle" id="needle"></div>
     </div>
 
+    <!-- Zone d'affichage des valeurs numériques -->
     <div class="readouts">
-        <div class="row"><span>Cap (°)</span><strong id="heading">—</strong></div>
-        <div class="row"><span>Source</span><strong id="source">—</strong></div>
-        <div class="row"><span>Inclinaison</span><strong id="tilt">—</strong></div>
-        <div class="row"><span>Status</span><strong id="status">Prêt</strong></div>
+        <div class="row">
+            <span>Cap (°)</span>
+            <strong id="heading">—</strong>
+        </div>
+        <div class="row">
+            <span>Source</span>
+            <strong id="source">—</strong>
+        </div>
+        <div class="row">
+            <span>Inclinaison</span>
+            <strong id="tilt">—</strong>
+        </div>
+        <div class="row">
+            <span>Status</span>
+            <strong id="status">Prêt</strong>
+        </div>
+
+
         <small id="note"></small>
     </div>
-  </div>
+</div>
