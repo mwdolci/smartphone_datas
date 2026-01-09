@@ -314,6 +314,7 @@
 
                     let zeroCount = 0;      // compteur de zéros envoyés
                     const maxZeros = 50;    // max 50 zéros consécutifs
+                    const minVolume = 0.1;  // volume minimal avant envoi
 
                     function updateMicro() {
                         analyser.getByteTimeDomainData(dataArray);
@@ -325,7 +326,7 @@
                         
                         const data = { volume };
 
-                        if (volume > 0) {
+                        if (volume > minVolume) {
                             // volume non nul → envoi normal et réinitialise le compteur de zéros
                             sendSensor("micro", data);
                             zeroCount = 0;
