@@ -284,7 +284,7 @@
             navigator.getBattery().then(battery => {
                 function updateBattery() {
                     const data = {
-                        level: battery.level * 100,  // ✅ CORRECTION : NUMBER au lieu de STRING
+                        level: battery.level * 100,
                         charging: battery.charging,
                         chargingTime: battery.chargingTime,
                         dischargingTime: battery.dischargingTime
@@ -346,24 +346,25 @@
         }
 
         function startNetwork() {
-    if (!navigator.connection) {
-        alert("API réseau non supportée");
-        return;
-    }
-    function updateNetwork() {
-        const conn = navigator.connection;
-        const data = {
-            effectiveType: conn.effectiveType,
-            downlink: conn.downlink,        
-            rtt: conn.rtt,                  
-            saveData: conn.saveData
-        };
-        document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
-        sendSensor("network", data);
-    }
-    navigator.connection.addEventListener('change', updateNetwork);
-    updateNetwork();
-}
+            if (!navigator.connection) {
+                alert("API réseau non supportée");
+                return;
+            }
+
+            function updateNetwork() {
+                const conn = navigator.connection;
+                const data = {
+                    effectiveType: conn.effectiveType,
+                    downlink: conn.downlink,        
+                    rtt: conn.rtt,                  
+                    saveData: conn.saveData
+                };
+                document.getElementById('networkOutput').textContent = JSON.stringify(data, null, 2);
+                sendSensor("network", data);
+            }
+            navigator.connection.addEventListener('change', updateNetwork);
+            updateNetwork();
+        }
 
         function startAll() {
             startGPS();
