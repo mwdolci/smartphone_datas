@@ -12,7 +12,7 @@
 **SmartCockpit** est un projet permettant d’afficher en temps réel les données issues des capteurs d’un smartphone Android directement sur une interface web.  
 Il agit comme un cockpit complet regroupant les informations suivantes :
 
-📌 GPS • Accéléromètre • Gyroscope • Orientation • Lumière • Batterie • Microphone • Caméra • Réseau • Heure locale • et plus encore.
+📌 Orientation 2D/3D • Coordonnées GPS • Boussole • Etat de la batterie • Microphone • Caméra • Réseau • Heure locale • et plus encore.
 
 L’objectif est d’offrir un tableau de bord clair et réactif pour visualiser facilement l’état d’un smartphone en direct.
 
