@@ -260,6 +260,8 @@
         }
 
         function startOrientation() {
+            let lastData = null; // stocke la dernière orientation envoyée
+
             window.addEventListener('deviceorientation', event => {
                 // const alpha = Math.round(event.alpha * 100) / 100;
                 // const beta = Math.round(event.beta * 100) / 100;
@@ -275,8 +277,13 @@
                     beta,
                     gamma
                 };
-                document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
-                sendSensor("orientation", data);
+
+                // Vérifie si les valeurs ont changé
+                if (!lastData || lastData.alpha !== data.alpha || lastData.beta !== data.beta ||lastData.gamma !== data.gamma) {
+                    document.getElementById('orientationOutput').textContent = JSON.stringify(data, null, 2);
+                    sendSensor("orientation", data);
+                    lastData = data; // met à jour la dernière valeur
+                }
             });
         }
 
