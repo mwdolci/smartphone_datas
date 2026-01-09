@@ -261,9 +261,13 @@
 
         function startOrientation() {
             window.addEventListener('deviceorientation', event => {
-                const alpha = Math.round(event.alpha * 100) / 100;
-                const beta = Math.round(event.beta * 100) / 100;
-                const gamma = Math.round(event.gamma * 100) / 100;
+                // const alpha = Math.round(event.alpha * 100) / 100;
+                // const beta = Math.round(event.beta * 100) / 100;
+                // const gamma = Math.round(event.gamma * 100) / 100;
+
+                const alpha = Math.round(event.alpha);
+                const beta = Math.round(event.beta);
+                const gamma = Math.round(event.gamma);
 
                 const data = {
                     absolute: event.absolute,
