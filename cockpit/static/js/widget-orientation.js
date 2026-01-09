@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as THREE from 'three'; // Bibliothèque 3D
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; // Loader pour les fichiers glTF
 
 let lastUpdate2D = 0;
 let alphaZero = null;
@@ -19,7 +19,7 @@ function updateCar2D(alpha, beta, gamma) {
     const carSide = document.getElementById("carSide");
     const carBack = document.getElementById("carBack");
 
-    carTop.style.transform  = `rotateZ(${-a}deg)`;
+    carTop.style.transform  = `rotateZ(${-a}deg)`; //xxxx.style.transform permet de faire une rotation CSS de l'image (`rotateZ(${-a}deg)` est en JS template literal pour insérer la variable a)
     carSide.style.transform = `rotateZ(${-beta}deg)`;
     carBack.style.transform = `rotateZ(${gamma}deg)`; 
 }
@@ -34,7 +34,7 @@ function normalizeModel(model, targetSize = 150) {
     // Calcul du bounding box
     const box = new THREE.Box3().setFromObject(model); // Crée une boîte englobante autour du modèle (THREE permet de manipuler des objets 3D)
     const size = new THREE.Vector3(); // Vecteur pour stocker la taille
-    box.getSize(size);
+    box.getSize(size); // Récupère la taille du modèle dans le vecteur size
     const maxDim = Math.max(size.x, size.y, size.z); // Trouve la dimension maximale
 
     // Ajuste l'échelle pour unifier la taille
