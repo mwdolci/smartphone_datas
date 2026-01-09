@@ -317,12 +317,9 @@
                         let sum = 0;
                         for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128);
                         const volume = sum / dataArray.length;
-                        document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2);
                         const data = { volume };
-                        // N'envoyer que si le volume > 0
-                        if (volume > 0) {
-                            sendSensor("micro", data);
-                        }
+                        document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2);
+                        sendSensor("micro", data);
                         requestAnimationFrame(updateMicro);
                     }
                     updateMicro();
