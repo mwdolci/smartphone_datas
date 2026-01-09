@@ -313,8 +313,8 @@
                     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                     let zeroCount = 0;      // compteur de zéros envoyés
-                    const maxZeros = 50;    // max 50 zéros consécutifs
-                    const minVolume = 0.1;  // volume minimal avant envoi
+                    const maxZeros = 5;    // max 5 zéros consécutifs
+                    const minVolume = 1;  // volume minimal avant envoi
 
                     function updateMicro() {
                         analyser.getByteTimeDomainData(dataArray);
