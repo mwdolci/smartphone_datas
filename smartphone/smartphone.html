@@ -312,13 +312,32 @@
                     analyser.fftSize = 256;
                     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
+                    let zeroCount = 0;      // compteur de zéros envoyés
+                    const maxZeros = 50;    // max 50 zéros consécutifs
+
                     function updateMicro() {
                         analyser.getByteTimeDomainData(dataArray);
                         let sum = 0;
                         for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128);
                         const volume = sum / dataArray.length;
-                        const data = { volume };
+                        
                         document.getElementById('microOutput').textContent = "Volume : " + volume.toFixed(2);
+                        
+                        const data = { volume };
+
+                        if (volume > 0) {
+                            // volume non nul → envoi normal et réinitialise le compteur de zéros
+                            sendSensor("micro", data);
+                            zeroCount = 0;
+                        } else {
+                            // volume = 0 → on n'envoie que si on n'a pas dépassé maxZeros
+                            if (zeroCount < maxZeros) {
+                                sendSensor("micro", data);
+                                zeroCount++;
+                            }
+                            // si zeroCount >= maxZeros → ne rien envoyer tant que volume = 0
+                        }
+
                         sendSensor("micro", data);
                         requestAnimationFrame(updateMicro);
                     }
