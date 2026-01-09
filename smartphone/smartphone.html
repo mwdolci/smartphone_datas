@@ -313,7 +313,7 @@
                     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                     let zeroCount = 0;      // compteur de zéros envoyés
-                    const maxZeros = 5;    // max 5 zéros consécutifs
+                    const maxZeros = 10;    // max 10 zéros consécutifs
                     const minVolume = 1;  // volume minimal avant envoi
 
                     function updateMicro() {
@@ -339,7 +339,6 @@
                             // si zeroCount >= maxZeros → ne rien envoyer tant que volume = 0
                         }
 
-                        sendSensor("micro", data);
                         requestAnimationFrame(updateMicro);
                     }
                     updateMicro();
